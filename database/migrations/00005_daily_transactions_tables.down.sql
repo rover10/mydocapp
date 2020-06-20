@@ -1,0 +1,1 @@
+drop table booking , treatment_detail , doctor_review , users, test_report , staff_role , doctor_qualification cascade;

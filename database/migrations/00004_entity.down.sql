@@ -1,0 +1,1 @@
+drop table users, patient , doctor , clinic , staff cascade;
