@@ -193,8 +193,57 @@ func (s *Server) RegisterClinic(context echo.Context) error {
 }
 
 //RegisterStaff register new staff of clinics
-func RegisterStaff(context echo.Context) error {
-	return nil
+func (s *Server) RegisterStaff(context echo.Context) error {
+	body, err := parseutil.ParseJSON(context)
+	if err != nil {
+		log.Printf("\nError: %+v", err)
+	}
+	//
+	fmt.Println(body)
+	required := []string{"accountId", "clinicId"}
+	remove := []string{"createdOn", "isActive"}
+	body = parseutil.RemoveFields(body, remove)
+	missing := parseutil.EnsureRequired(body, required)
+	if len(missing) != 0 {
+		log.Println("missing", missing)
+		return context.JSON(http.StatusBadRequest, missing)
+	}
+
+	stringFields := []string{"accountId", "clinicId", "createdOn"}
+	boolField := []string{"isActive"}
+	staff := model.Staff{}
+	body, invalidType := parseutil.MapX(body, staff, stringFields, nil, nil, boolField)
+	if len(invalidType) != 0 {
+		log.Println("invalidType", invalidType)
+		return context.JSON(http.StatusBadRequest, invalidType)
+	}
+
+	// Send to query builder BuildQuery(table string, model map[string]interface{}, returnfields []string)
+	query, values := querybuilder.BuildInsertQuery(body, "staff")
+	// Camel case can be utilize of RETURNING colum names are supposed to be user instead of table
+	query = query + " RETURNING account_id, clinic_id, created_on, is_active"
+	fmt.Println(query)
+	fmt.Println(values)
+	// Execute query
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	row := tx.QueryRow(query, values...)
+
+	err = row.Scan(&staff.AccountID, &staff.ClinicID, &staff.CreatedOn, &staff.IsActive)
+	if err != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("\nDatabase Commit Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+
+	// Parse response into {model.User}: ParseRow(row, returnfields)
+	return context.JSON(http.StatusOK, staff)
 }
 
 //BookAppointment book a new appointment for consultation
