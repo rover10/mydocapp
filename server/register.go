@@ -313,8 +313,63 @@ func (s *Server) RegisterStaff(context echo.Context) error {
 }
 
 //BookAppointment book a new appointment for consultation
-func BookAppointment(context echo.Context) error {
-	return nil
+func (s *Server) BookAppointment(context echo.Context) error {
+	body, err := parseutil.ParseJSON(context)
+	if err != nil {
+		log.Printf("\nError: %+v", err)
+	}
+	//
+	fmt.Println(body)
+	required := []string{"accountId", "clinicId", "patientId", "slotDateTime", "contactPhone"}
+	remove := []string{"uid", "createdOn", "noShow"}
+	body = parseutil.RemoveFields(body, remove)
+	missing := parseutil.EnsureRequired(body, required)
+	if len(missing) != 0 {
+		log.Println("missing", missing)
+		return context.JSON(http.StatusBadRequest, missing)
+	}
+
+	stringFields := []string{"accountId", "clinicId", "patientId", "slotDateTime", "contactPhone"}
+	boolField := []string{"noShow"}
+	intField := []string{"diseaseId"}
+	appointment := model.Appointment{}
+
+	body, invalidType := parseutil.MapX(body, appointment, stringFields, nil, intField, boolField, nil)
+	if len(invalidType) != 0 {
+		log.Println("invalidType", invalidType)
+		return context.JSON(http.StatusBadRequest, invalidType)
+	}
+
+	// Send to query builder BuildQuery(table string, model map[string]interface{}, returnfields []string)
+	query, values := querybuilder.BuildInsertQuery(body, "appointment")
+	// Camel case can be utilize of RETURNING colum names are supposed to be user instead of table
+	query = query + " RETURNING uid, account_id, clinic_id, patient_id, disease_id, slot_date_time, contact_phone, no_show, created_on"
+	fmt.Println(query)
+	fmt.Println(values)
+	// Execute query
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	row := tx.QueryRow(query, values...)
+	diseaseID := sql.NullInt64{}
+	err = row.Scan(&appointment.UID, &appointment.AccountID, &appointment.ClinicID, &appointment.PatientID, &diseaseID, &appointment.SlotDateTime, &appointment.ContactPhone, &appointment.NoShow, &appointment.CreatedOn)
+	if err != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("\nDatabase Commit Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	if diseaseID.Valid {
+		dval := diseaseID.Int64
+		intdVal := int(dval)
+		appointment.DiseaseID = &intdVal
+	}
+	// Parse response into {model.User}: ParseRow(row, returnfields)
+	return context.JSON(http.StatusOK, appointment)
 
 }
 
