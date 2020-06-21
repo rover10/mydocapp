@@ -64,7 +64,7 @@ func EnsureRequired(body map[string]interface{}, requiredFields []string) []stri
 //Others
 
 //MapX takes the model which needs to be inserted/updated
-func MapX(requestBody map[string]interface{}, datamodel interface{}, kString []string, kFloat64 []string, kInt []string, kBool []string) (map[string]interface{}, []string) {
+func MapX(requestBody map[string]interface{}, datamodel interface{}, kString []string, kFloat64 []string, kInt []string, kBool []string, kJSON []string) (map[string]interface{}, []string) {
 	invalidDataType := make([]string, 0)
 	validBody := make(map[string]interface{}, 0)
 
@@ -73,7 +73,7 @@ func MapX(requestBody map[string]interface{}, datamodel interface{}, kString []s
 	mFloat64 := mapKeys(kFloat64)
 	mInt := mapKeys(kInt)
 	mBool := mapKeys(kBool)
-
+	mJSON := mapKeys(kJSON)
 	// Convert the structure datamodel {User, Doctor, Staff..etc} to map
 	inrec, _ := json.Marshal(&datamodel)
 	var modelMap map[string]interface{}
@@ -94,6 +94,9 @@ func MapX(requestBody map[string]interface{}, datamodel interface{}, kString []s
 				validBody, invalidDataType = setValue(validBody, invalidDataType, k, value, valid)
 			} else if mBool[k] != nil {
 				value, valid := ensureBool(v)
+				validBody, invalidDataType = setValue(validBody, invalidDataType, k, value, valid)
+			} else if mJSON[k] != nil {
+				value, valid := ensureJSON(v)
 				validBody, invalidDataType = setValue(validBody, invalidDataType, k, value, valid)
 			}
 		}
@@ -149,6 +152,14 @@ func ensureFloat64(v interface{}) (float64, bool) {
 
 func ensureBool(v interface{}) (bool, bool) {
 	value, ok := v.(bool)
+	if !ok {
+		return false, false
+	}
+	return value, true
+}
+
+func ensureJSON(v interface{}) (interface{}, bool) {
+	value, ok := v.(interface{})
 	if !ok {
 		return false, false
 	}

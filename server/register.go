@@ -37,7 +37,7 @@ func (s *Server) RegisterUser(context echo.Context) error {
 	stringFields := []string{"firstName", "lastName", "phone", "email"}
 	intFields := []string{"userType", "genderId", "countryId"}
 	user := model.User{}
-	body, invalidType := parseutil.MapX(body, user, stringFields, nil, intFields, nil)
+	body, invalidType := parseutil.MapX(body, user, stringFields, nil, intFields, nil, nil)
 	if len(invalidType) != 0 {
 		log.Println("invalidType", invalidType)
 		return context.JSON(http.StatusBadRequest, invalidType)
@@ -71,8 +71,74 @@ func (s *Server) RegisterUser(context echo.Context) error {
 }
 
 //RegisterPatient register a new patient
-func RegisterPatient(context echo.Context) error {
-	return nil
+func (s *Server) RegisterPatient(context echo.Context) error {
+	body, err := parseutil.ParseJSON(context)
+	if err != nil {
+		log.Printf("\nError: %+v", err)
+	}
+	// Move to a normalize table to make modification and reitreval easy
+	/*
+			"anyExistingMedicalCondition": {
+			"conditions": [
+					{
+						"name": "diabetes",
+						"id": 1,
+						"description": "Unknown",
+						"from": "2018-06-21T22:28:12.608205Z"
+					}
+				]
+		    }
+	*/
+	fmt.Println(body)
+	required := []string{"accountId", "firstName", "email", "phone", "genderId", "age", "countryId"}
+	remove := []string{"uid", "createdOn", "updatedOn"}
+	body = parseutil.RemoveFields(body, remove)
+	missing := parseutil.EnsureRequired(body, required)
+	if len(missing) != 0 {
+		log.Println("missing", missing)
+		return context.JSON(http.StatusBadRequest, missing)
+	}
+
+	stringFields := []string{"accountId", "firstName", "lastName", "phone", "email"}
+	intFields := []string{"genderId", "age", "countryId"}
+	//jsonFields := []string{"anyExistingMedicalCondition"}
+	patient := model.Patient{}
+	body, invalidType := parseutil.MapX(body, patient, stringFields, nil, intFields, nil, nil)
+	if len(invalidType) != 0 {
+		log.Println("invalidType", invalidType)
+		return context.JSON(http.StatusBadRequest, invalidType)
+	}
+
+	// Send to query builder BuildQuery(table string, model map[string]interface{}, returnfields []string)
+	query, values := querybuilder.BuildInsertQuery(body, "patient")
+	// Camel case can be utilize of RETURNING colum names are supposed to be user instead of table
+	query = query + " RETURNING uid, account_id, first_name, last_name, age, email, phone, gender_id, country_id, created_on"
+
+	fmt.Println(query)
+	fmt.Println(values)
+	// Execute query
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	row := tx.QueryRow(query, values...)
+	lastName := sql.NullString{}
+
+	err = row.Scan(&patient.UID, &patient.AccountID, &patient.FirstName, &lastName, &patient.Age, &patient.Email, &patient.Phone, &patient.GenderID, &patient.CountryID, &patient.CreatedOn)
+	if err != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("\nDatabase Commit Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	if lastName.Valid {
+		patient.LastName = lastName.String
+	}
+	// Parse response into {model.User}: ParseRow(row, returnfields)
+	return context.JSON(http.StatusOK, patient)
 }
 
 //RegisterDoctor register a new doctor
@@ -95,7 +161,7 @@ func (s *Server) RegisterDoctor(context echo.Context) error {
 	stringFields := []string{"accountId", "practiceStartDate"}
 	floatFields := []string{"fee"}
 	doctor := model.Doctor{}
-	body, invalidType := parseutil.MapX(body, doctor, stringFields, floatFields, nil, nil)
+	body, invalidType := parseutil.MapX(body, doctor, stringFields, floatFields, nil, nil, nil)
 	if len(invalidType) != 0 {
 		log.Println("invalidType", invalidType)
 		return context.JSON(http.StatusBadRequest, invalidType)
@@ -104,7 +170,7 @@ func (s *Server) RegisterDoctor(context echo.Context) error {
 	// Send to query builder BuildQuery(table string, model map[string]interface{}, returnfields []string)
 	query, values := querybuilder.BuildInsertQuery(body, "doctor")
 	// Camel case can be utilize of RETURNING colum names are supposed to be user instead of table
-	query = query + " RETURNING account_id, fee,  practice_start_date"
+	query = query + " RETURNING account_id, fee, practice_start_date"
 
 	fmt.Println(query)
 	fmt.Println(values)
@@ -158,7 +224,7 @@ func (s *Server) RegisterClinic(context echo.Context) error {
 	stringFields := []string{"accountId", "name", "address", "phone", "email"}
 	intFields := []string{"stateId", "countryId"}
 	clinic := model.Clinic{}
-	body, invalidType := parseutil.MapX(body, clinic, stringFields, nil, intFields, nil)
+	body, invalidType := parseutil.MapX(body, clinic, stringFields, nil, intFields, nil, nil)
 	if len(invalidType) != 0 {
 		log.Println("invalidType", invalidType)
 		return context.JSON(http.StatusBadRequest, invalidType)
@@ -212,7 +278,7 @@ func (s *Server) RegisterStaff(context echo.Context) error {
 	stringFields := []string{"accountId", "clinicId", "createdOn"}
 	boolField := []string{"isActive"}
 	staff := model.Staff{}
-	body, invalidType := parseutil.MapX(body, staff, stringFields, nil, nil, boolField)
+	body, invalidType := parseutil.MapX(body, staff, stringFields, nil, nil, boolField, nil)
 	if len(invalidType) != 0 {
 		log.Println("invalidType", invalidType)
 		return context.JSON(http.StatusBadRequest, invalidType)
