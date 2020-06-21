@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/labstack/echo"
 	"github.com/rover10/mydocapp.git/model"
 	"github.com/rover10/mydocapp.git/parseutil"
+	"github.com/rover10/mydocapp.git/querybuilder"
 )
 
 // Ping - This function will ping the echo server
@@ -18,7 +20,7 @@ func Ping(context echo.Context) error {
 func RegisterUser(context echo.Context) error {
 	body, err := parseutil.ParseJSON(context)
 	if err != nil {
-		log.Printf("Error:", err)
+		log.Printf("Error: %+v", err)
 	}
 	//
 	required := []string{"firstName", "email", "phone", "gender", "age", "country", "userType"}
@@ -39,25 +41,13 @@ func RegisterUser(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, invalidType)
 	}
 
-	// //user.Country =
-	// user.FirstName = "Rakesh"
-	// //user.LastName = &"Kumar"
-	// user.Gender = 1
-	// //user.IsActive = true
-	// user.Phone = "9971588951"
-	// //user.UpdatedOn = time.Now()
-	// user.UserType = 1
-	// user.CreatedOn = time.Now().UTC().String()
-
-	context.JSON(http.StatusOK, body)
-
-	// Get string and covert to map[string]interface{}
-	// Checks mandatory fields
-	// Remove prohibited fields such as createOn, IsApproved etc.
 	// Send to query builder BuildQuery(table string, model map[string]interface{}, returnfields []string)
+	query, values := querybuilder.BuildInsertQuery(body, "users")
+	fmt.Println(query)
+	fmt.Println(values)
 	// Execute query
 	// Parse response into {model.User}: ParseRow(row, returnfields)
-	return nil
+	return context.JSON(http.StatusOK, body)
 }
 
 //RegisterPatient register a new patient
