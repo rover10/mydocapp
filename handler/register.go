@@ -25,7 +25,8 @@ func RegisterUser(context echo.Context) error {
 	remove := []string{"uid", "createdOn", "updatedOn", "isActive"}
 	body = parseutil.RemoveFields(body, remove)
 	missing := parseutil.EnsureRequired(body, required)
-	if missing != nil || len(missing) != 0 {
+	if len(missing) != 0 {
+		log.Println("missing", missing)
 		return context.JSON(http.StatusBadRequest, missing)
 	}
 
@@ -33,7 +34,8 @@ func RegisterUser(context echo.Context) error {
 	intFields := []string{"userType", "gender", "country"}
 	user := model.User{}
 	body, invalidType := parseutil.MapX(body, user, stringFields, nil, intFields, nil)
-	if invalidType != nil || len(invalidType) != 0 {
+	if len(invalidType) != 0 {
+		log.Println("invalidType", invalidType)
 		return context.JSON(http.StatusBadRequest, invalidType)
 	}
 

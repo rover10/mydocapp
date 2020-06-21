@@ -40,7 +40,7 @@ func RemoveFields(body map[string]interface{}, removeFields []string) map[string
 
 //EnsureRequired ensure required fields are present
 func EnsureRequired(body map[string]interface{}, requiredFields []string) []string {
-	var missing []string
+	missing := make([]string, 0)
 	if body != nil {
 		for _, v := range requiredFields {
 			if body[v] == nil {
@@ -65,8 +65,8 @@ func EnsureRequired(body map[string]interface{}, requiredFields []string) []stri
 
 //MapX takes the model which needs to be inserted/updated
 func MapX(requestBody map[string]interface{}, datamodel interface{}, kString []string, kFloat64 []string, kInt []string, kBool []string) (map[string]interface{}, []string) {
-	var invalidDataType []string
-	var validBody map[string]interface{}
+	invalidDataType := make([]string, 0)
+	validBody := make(map[string]interface{}, 0)
 
 	// string, float64, int, bool
 	mString := mapKeys(kString)
