@@ -1,4 +1,4 @@
-package handler
+package server
 
 import (
 	"fmt"
@@ -12,18 +12,19 @@ import (
 )
 
 // Ping - This function will ping the echo server
-func Ping(context echo.Context) error {
+func (s *Server) Ping(context echo.Context) error {
 	return context.JSON(http.StatusOK, map[string]interface{}{"Health": "OK"})
 }
 
 // RegisterUser register a new user
-func RegisterUser(context echo.Context) error {
+func (s *Server) RegisterUser(context echo.Context) error {
 	body, err := parseutil.ParseJSON(context)
 	if err != nil {
-		log.Printf("Error: %+v", err)
+		log.Printf("\nError: %+v", err)
 	}
 	//
-	required := []string{"firstName", "email", "phone", "gender", "age", "country", "userType"}
+	fmt.Println(body)
+	required := []string{"firstName", "email", "phone", "genderId", "age", "countryId", "userType"}
 	remove := []string{"uid", "createdOn", "updatedOn", "isActive"}
 	body = parseutil.RemoveFields(body, remove)
 	missing := parseutil.EnsureRequired(body, required)
@@ -33,7 +34,7 @@ func RegisterUser(context echo.Context) error {
 	}
 
 	stringFields := []string{"firstName", "lastName", "phone", "email"}
-	intFields := []string{"userType", "gender", "country"}
+	intFields := []string{"userType", "genderId", "countryId"}
 	user := model.User{}
 	body, invalidType := parseutil.MapX(body, user, stringFields, nil, intFields, nil)
 	if len(invalidType) != 0 {
@@ -43,11 +44,29 @@ func RegisterUser(context echo.Context) error {
 
 	// Send to query builder BuildQuery(table string, model map[string]interface{}, returnfields []string)
 	query, values := querybuilder.BuildInsertQuery(body, "users")
+	// Camel case can be utilize of RETURNING colum names are supposed to be user instead of table
+	query = query + " RETURNING uid, first_name, email, phone, user_type, gender_id, country_id, is_active, created_on"
+
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	row := tx.QueryRow(query, values...)
+	err = row.Scan(&user.UID, &user.FirstName, &user.Email, &user.Phone, &user.UserType, &user.Gender, &user.Country, &user.IsActive, &user.CreatedOn)
+	if err != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("\nDatabase Commit Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
 	// Parse response into {model.User}: ParseRow(row, returnfields)
-	return context.JSON(http.StatusOK, body)
+	return context.JSON(http.StatusOK, user)
 }
 
 //RegisterPatient register a new patient

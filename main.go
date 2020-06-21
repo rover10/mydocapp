@@ -20,13 +20,14 @@ func main() {
 	config := config.Config{}
 	config.APIPath = "/"
 	config.DBHost = "localhost"
-	config.DBName = "postgres"
+	config.DBName = "docapp"
 	config.DBPassword = "root"
 	config.DBUser = "postgres"
 	config.Host = "localhost"
 	config.Port = 3000
 	config.WebDir = "web"
 	server := server.NewServer(config)
+	server.DB = db
 	api.Api(server)
 	err = server.Start()
 	if err != nil {
@@ -36,7 +37,7 @@ func main() {
 }
 
 func DBConnect() (*sql.DB, error) {
-	dbinfo := "user=postgres port=5432 password=root dbname=postgres host=localhost sslmode=disable"
+	dbinfo := "user=postgres port=5432 password=root dbname=docapp host=localhost sslmode=disable"
 	db, err := sql.Open("postgres", dbinfo)
 	if err != nil {
 		log.Errorf("failed loading parameteres. Error :%+v", err)

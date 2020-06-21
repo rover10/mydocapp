@@ -8,10 +8,10 @@ type User struct {
 	IsActive  *bool     `json:"isActive"`
 	FirstName string    `json:"firstName"`
 	LastName  *string   `json:"lastName"`
-	Gender    int       `json:"gender"`
+	Gender    int       `json:"genderId"`
 	Phone     string    `json:"phone"`
 	Email     string    `json:"email"`
-	Country   *int      `json:"country"`
+	Country   *int      `json:"countryId"`
 	CreatedOn string    `json:"createdOn"`
 	UpdatedOn *string   `json:"updatedOn"`
 }

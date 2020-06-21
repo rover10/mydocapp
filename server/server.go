@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"io"
 	"net/http"
@@ -17,6 +18,7 @@ type Server struct {
 	config.Config
 	Router    *echo.Echo
 	Templates *template.Template
+	DB        *sql.DB
 }
 
 // Start - This function will start the echo server
@@ -33,6 +35,7 @@ func (s *Server) Stop(ctx context.Context) error {
 
 // ServeHTTP
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("SERVING..... ...")
 	s.Router.ServeHTTP(w, r)
 }
 
@@ -57,6 +60,7 @@ func NewServer(cfg config.Config) *Server {
 		Config:    cfg,
 		Router:    echo.New(),
 		Templates: Templates("web"),
+		DB:        nil,
 	}
 	return server
 }
