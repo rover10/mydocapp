@@ -1,6 +1,7 @@
 package server
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -75,8 +76,66 @@ func RegisterPatient(context echo.Context) error {
 }
 
 //RegisterDoctor register a new doctor
-func RegisterDoctor(context echo.Context) error {
-	return nil
+func (s *Server) RegisterDoctor(context echo.Context) error {
+	body, err := parseutil.ParseJSON(context)
+	if err != nil {
+		log.Printf("\nError: %+v", err)
+	}
+	//
+	fmt.Println(body)
+	required := []string{"accountId"}
+	remove := []string{"rating", "approved", "onboardedOn"}
+	body = parseutil.RemoveFields(body, remove)
+	missing := parseutil.EnsureRequired(body, required)
+	if len(missing) != 0 {
+		log.Println("missing", missing)
+		return context.JSON(http.StatusBadRequest, missing)
+	}
+
+	stringFields := []string{"accountId", "practiceStartDate"}
+	floatFields := []string{"fee"}
+	doctor := model.Doctor{}
+	body, invalidType := parseutil.MapX(body, doctor, stringFields, floatFields, nil, nil)
+	if len(invalidType) != 0 {
+		log.Println("invalidType", invalidType)
+		return context.JSON(http.StatusBadRequest, invalidType)
+	}
+
+	// Send to query builder BuildQuery(table string, model map[string]interface{}, returnfields []string)
+	query, values := querybuilder.BuildInsertQuery(body, "doctor")
+	// Camel case can be utilize of RETURNING colum names are supposed to be user instead of table
+	query = query + " RETURNING account_id, fee,  practice_start_date"
+
+	fmt.Println(query)
+	fmt.Println(values)
+	// Execute query
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	row := tx.QueryRow(query, values...)
+	fee := sql.NullFloat64{}
+	practiceStartDate := sql.NullString{}
+	err = row.Scan(&doctor.AccountID, &fee, &practiceStartDate)
+	if err != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("\nDatabase Commit Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	if fee.Valid {
+		doctor.Fee = &fee.Float64
+	}
+	if practiceStartDate.Valid {
+		doctor.PracticeStartDate = &practiceStartDate.String
+	}
+
+	// Parse response into {model.User}: ParseRow(row, returnfields)
+	return context.JSON(http.StatusOK, doctor)
+
 }
 
 //RegisterClinic register a new clinic

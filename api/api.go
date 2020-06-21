@@ -14,6 +14,8 @@ func Api(server *server.Server) {
 	server.Router.GET(path.Join(server.APIPath, "/v1/ping"), server.Ping)
 	server.Router.GET(path.Join(server.APIPath, "/v1/user/:uid"), server.RegisterUser)
 	server.Router.POST(path.Join(server.APIPath, "/v1/user"), server.RegisterUser)
+	server.Router.POST(path.Join(server.APIPath, "/v1/doctor"), server.RegisterDoctor)
+
 	server.Router.Renderer = server
 	server.Router.HideBanner = true
 	server.Router.HidePort = true
