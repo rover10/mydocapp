@@ -76,7 +76,7 @@ func (s *Server) RegisterPatient(context echo.Context) error {
 	if err != nil {
 		log.Printf("\nError: %+v", err)
 	}
-	// Move to a normalize table to make modification and reitreval easy
+	// Move to a normalize table to make modification and reitreval easy instead of JSON
 	/*
 			"anyExistingMedicalCondition": {
 			"conditions": [
