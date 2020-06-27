@@ -22,13 +22,6 @@ func main() {
 		"*uuid.UUID": "sql.NullString",
 		//"*": "sql.NullTime"
 	}
-
-	stringField := make([]string, 0)
-	boolField := make([]string, 0)
-	intField := make([]string, 0)
-	floatField := make([]string, 0)
-	jsonField := make([]string, 0)
-
 	primitiveTypes := map[string]interface{}{
 		"bool":       "bool",
 		"float64":    "float64",
@@ -47,60 +40,63 @@ func main() {
 		//"*": "sql.NullTime"
 	}
 
-	//insert-required:true
-	//post-required:true
+	//create-required:true
 	//update-required:true
-	//readonly
+
 	//return all the fields in all the case
 	//tag := f.Tag.Get("insert-required")
-	insertRequired := make([]string, 1)
-	insertRequired[0] = "0"
+	createRequired := make([]string, 0)
+	createRemove := make([]string, 0)
 	//tag := f.Tag.Get("post-require")
-
 	//tag := f.Tag.Get("update-required")
-	updateRequired := make([]string, 1)
-	updateRequired[0] = "0"
-	//writeIgnore:"True"
-	writeIgnore := make([]string, 1)
-	writeIgnore[0] = "0"
+	updateRequired := make([]string, 0)
+	updateRemove := make([]string, 0)
+
 	//return fields
 	returnFields := make([]string, 0)
-
-	//
-
-	//
 	// Scan values
-	// snake := convertToSnake(tag)
-	// generate get returning all fields
-	// generate post
-	// generate put
 	// Mark fields which does not need serialization
 	t := reflect.TypeOf(dr)
 	modelVariable := "model"
-
+	stringField := make([]string, 0)
+	boolField := make([]string, 0)
+	intField := make([]string, 0)
+	floatField := make([]string, 0)
+	jsonField := make([]string, 0)
 	//scanline reads all fi
 	scanStatement := ""
-
 	//nullableVariableDeclartion
 	nullableVariableDeclartion := make([]string, 0)
 	scanStatementArgs := make([]string, 0)
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
 		fmt.Println(f.Name)
-
 		tf := fmt.Sprintf("%s", f.Type)
 		key := fmt.Sprintf("%s, %s, %s", f.Name, f.Type, nullTypes[tf])
-		insertReq := f.Tag.Get("insert-required")
-		if insertReq == "True" {
-			insertRequired = append(insertRequired, tf)
+
+		// Create
+		createReq := f.Tag.Get("create-required")
+		createRem := f.Tag.Get("create-remove")
+		if createRem == "True" && createReq == "True" {
+			fmt.Println("Ambiguous requirement, either of 'create-required' or 'create-remove' should be applied at time.")
+			return
+		} else if createReq == "True" {
+			createRequired = append(createRequired, tf)
+		} else if createRem == "True" {
+			createRemove = append(createRemove, tf)
 		}
 
+		// Update
 		updateReq := f.Tag.Get("update-required")
-		if updateReq == "True" {
+		updateRem := f.Tag.Get("update-remove")
+		if updateReq == "True" && updateRem == "True" {
+			fmt.Println("Ambiguous requirement, either of 'update-required' or 'update-remove' should be applied at time.")
+			return
+		} else if updateReq == "True" {
 			updateRequired = append(updateRequired, tf)
+		} else if updateRem == "True" {
+			updateRemove = append(updateRemove, tf)
 		}
-
-		//
 		//For pointer type NullType
 		//textT := fmt.Sprintf("%s", tf)
 		//fmt.Println("\ntext = %s", t)
@@ -116,7 +112,6 @@ func main() {
 		} else if dataType != "bool" {
 			boolField = append(boolField, jsonField)
 		}
-
 		queryReturnField := querybuilder.SnakeToCamelCase(f.Tag.Get("json"))
 		if strings.Contains(key, "*") {
 			sqlNullType := nullTypes[tf]
@@ -139,7 +134,6 @@ func main() {
 			}
 		}
 
-		//
 		// excluded fields for PUT,POST and GET
 		// required: required tag
 		// datatype categorization int, float64, string, boolean
