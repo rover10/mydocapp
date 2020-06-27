@@ -5,29 +5,8 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/rover10/mydocapp.git/querybuilder"
 	uuid "github.com/satori/go.uuid"
-)
-
-const (
-	EXECUTE_SQL = `
-tx, err := s.DB.Begin()
-if err != nil {
-	return context.JSON(http.StatusInternalServerError, err)
-}
-row := tx.QueryRow(query, values...)
-	`
-	AFTER_RESULT_SCAN = `	
-if err != nil {
-	log.Printf("\nDatabase Error: %+v", err)
-	return context.JSON(http.StatusInternalServerError, err)
-}
-err = tx.Commit()
-if err != nil {
-	log.Printf("\nDatabase Commit Error: %+v", err)
-	return context.JSON(http.StatusInternalServerError, err)
-}
-return context.JSON(http.StatusOK, model)
-	`
 )
 
 func main() {
@@ -72,11 +51,7 @@ func main() {
 	writeIgnore := make([]string, 1)
 	writeIgnore[0] = "0"
 	//return fields
-	returnFields := make([]string, 1)
-	returnFields[0] = "0"
-	//return Scan fields
-	scanFields := make([]string, 1)
-	scanFields[0] = "0"
+	returnFields := make([]string, 0)
 
 	// Scan values
 	// snake := convertToSnake(tag)
@@ -115,12 +90,13 @@ func main() {
 		//textT := fmt.Sprintf("%s", tf)
 		//fmt.Println("\ntext = %s", t)
 		//fmt.Println(fmt.Sprintf("\n---->>>>>%s", textT))
-
+		jsonField := querybuilder.SnakeToCamelCase(f.Tag.Get("json"))
 		if strings.Contains(key, "*") {
 			sqlNullType := nullTypes[tf]
 			if sqlNullType != nil {
-				nullableVariable := fmt.Sprintf("%s := %s{}", f.Tag.Get("json"), sqlNullType)
+				nullableVariable := fmt.Sprintf("%s := %s{}", jsonField, sqlNullType)
 				println("--->>>" + nullableVariable)
+				returnFields = append(returnFields, jsonField)
 				nullableVariableDeclartion = append(nullableVariableDeclartion, nullableVariable)
 				scanStatement = fmt.Sprintf("&%s ", f.Tag.Get("json"))
 				scanStatementArgs = append(scanStatementArgs, scanStatement)
@@ -131,6 +107,7 @@ func main() {
 			//println(templateCode)
 			primType := primitiveTypes[tf]
 			if primType != nil {
+				returnFields = append(returnFields, jsonField)
 				scanStatement = fmt.Sprintf("&%s.%s ", modelVariable, f.Name)
 				scanStatementArgs = append(scanStatementArgs, scanStatement)
 			}
@@ -148,6 +125,8 @@ func main() {
 
 	}
 
+	returnFieldsStatement := "RETURNING " + strings.Join(returnFields, ",")
+	fmt.Println(returnFieldsStatement)
 	// Execute SQL
 	fmt.Println(EXECUTE_SQL)
 	//Nullable variable declaration
@@ -157,6 +136,7 @@ func main() {
 	//Scan query result
 	scanResult := "err = row.Scan(" + strings.Join(scanStatementArgs, ",") + ")"
 	fmt.Println(scanResult)
+	// After scan, commit
 	fmt.Println(AFTER_RESULT_SCAN)
 	fmt.Println("--->")
 }
@@ -178,6 +158,28 @@ type Doctor struct {
 type D struct {
 	A string `json:"a"`
 }
+
+const (
+	EXECUTE_SQL = `
+tx, err := s.DB.Begin()
+if err != nil {
+	return context.JSON(http.StatusInternalServerError, err)
+}
+row := tx.QueryRow(query, values...)
+	`
+	AFTER_RESULT_SCAN = `	
+if err != nil {
+	log.Printf("\nDatabase Error: %+v", err)
+	return context.JSON(http.StatusInternalServerError, err)
+}
+err = tx.Commit()
+if err != nil {
+	log.Printf("\nDatabase Commit Error: %+v", err)
+	return context.JSON(http.StatusInternalServerError, err)
+}
+return context.JSON(http.StatusOK, model)
+	`
+)
 
 /*
 bool
