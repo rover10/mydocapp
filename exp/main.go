@@ -145,6 +145,26 @@ func main() {
 
 	}
 
+	// Required and remove field for create
+	createRequiredStmt := fmt.Sprintf("createRequired := []string{\"%s\"}", strings.Join(createRequired, "\",\""))
+	createRemoveStmt := fmt.Sprintf("createRemove := []string{\"%s\"}", strings.Join(createRemove, "\",\""))
+
+	// Required and remove field for update
+	updateRequiredStmt := fmt.Sprintf("updateRequired := []string{\"%s\"}", strings.Join(updateRequired, "\",\""))
+	updateRemoveStmt := fmt.Sprintf("updateRemove := []string{\"%s\"}", strings.Join(updateRemove, "\",\""))
+
+	//CREATE remove & required
+	createRemoveAndRequiredStmts := fmt.Sprintf(REQUIRED_AND_REMOVE, "createRemove", "createRequired")
+	fmt.Println(createRequiredStmt)
+	fmt.Println(createRemoveStmt)
+	fmt.Println(createRemoveAndRequiredStmts)
+
+	//UPDATE remove & required
+	updateRemoveAndRequiredStmts := fmt.Sprintf(REQUIRED_AND_REMOVE, "updateRemove", "updateRequired")
+	fmt.Println(updateRequiredStmt)
+	fmt.Println(updateRemoveStmt)
+	fmt.Println(updateRemoveAndRequiredStmts)
+
 	// Datatype statements
 	stringFieldStmt := fmt.Sprintf("stringField := []string{\"%s\"}", strings.Join(stringField, "\",\""))
 	fmt.Println(stringFieldStmt)
@@ -216,6 +236,15 @@ type D struct {
 }
 
 const (
+	REQUIRED_AND_REMOVE = `
+body = parseutil.RemoveFields(body, %s)
+missing := parseutil.EnsureRequired(body, %s)
+if len(missing) != 0 {
+	log.Println("missing", missing)
+	return context.JSON(http.StatusBadRequest, missing)
+}
+	`
+
 	INVALID_DATA_TYPE = `
 body, invalidType := parseutil.MapX(body, %s, stringFields, floatField, intField, boolField, jsonField)
 if len(invalidType) != 0 {
