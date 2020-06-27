@@ -389,7 +389,7 @@ func (s *Server) RegisterTreatment(context echo.Context) error {
 	}
 
 	createRequired := []string{"appointmentId", "doctorId", "patientProblemDescription"}
-	createRemove := []string{"uid"}
+	createRemove := []string{"uid", "createdOn"}
 	body = parseutil.RemoveFields(body, createRemove)
 	missing := parseutil.EnsureRequired(body, createRequired)
 	if len(missing) != 0 {
@@ -397,7 +397,7 @@ func (s *Server) RegisterTreatment(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, missing)
 	}
 
-	stringField := []string{"uid", "appointmentId", "doctorId", "patientProblemDescription"}
+	stringField := []string{"uid", "appointmentId", "doctorId", "patientProblemDescription", "createdOn"}
 	intField := []string{""}
 	floatField := []string{""}
 	boolField := []string{""}
@@ -411,7 +411,7 @@ func (s *Server) RegisterTreatment(context echo.Context) error {
 	}
 
 	query, values := querybuilder.BuildInsertQuery(body, "treatment")
-	query = query + "RETURNING uid,appointment_id,doctor_id,patient_problem_description"
+	query = query + "RETURNING uid,appointment_id,doctor_id,patient_problem_description,created_on"
 
 	tx, err := s.DB.Begin()
 	if err != nil {
@@ -419,7 +419,7 @@ func (s *Server) RegisterTreatment(context echo.Context) error {
 	}
 	row := tx.QueryRow(query, values...)
 
-	err = row.Scan(&model.UID, &model.AppointmentID, &model.DoctorID, &model.PatientProblemDesc)
+	err = row.Scan(&model.UID, &model.AppointmentID, &model.DoctorID, &model.PatientProblemDesc, &model.CreatedOn)
 
 	if err != nil {
 		log.Printf("\nDatabase Error: %+v", err)
@@ -431,7 +431,6 @@ func (s *Server) RegisterTreatment(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 	return context.JSON(http.StatusOK, model)
-
 }
 
 //RegisterDoctorReview regsiter a review by the user

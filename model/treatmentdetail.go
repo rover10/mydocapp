@@ -11,4 +11,5 @@ type Treatment struct {
 	//doctor_id uuid references users(uid) not null,
 	PatientProblemDesc string `json:"patientProblemDescription" create-required:"True" update-remove:"True"`
 	//patient_problem_description varchar);
+	CreatedOn string `json:"createdOn" create-remove:"True"`
 }
