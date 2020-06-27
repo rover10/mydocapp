@@ -5,12 +5,13 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/rover10/mydocapp.git/model"
 	"github.com/rover10/mydocapp.git/querybuilder"
 	uuid "github.com/satori/go.uuid"
 )
 
 func main() {
-	dr := Doctor{}
+	dr := model.TreatmentDetail{}
 	//fmt.Println(dr.main.D)
 	nullTypes := map[string]interface{}{
 		"*bool":      "sql.NullBool",
@@ -182,7 +183,8 @@ func main() {
 
 	jsonFieldStmt := fmt.Sprintf("jsonField := []string{\"%s\"}", strings.Join(jsonField, "\",\""))
 	fmt.Println(jsonFieldStmt)
-	//
+
+	// Create return model object
 	model := fmt.Sprintf("%s{}", t)
 	modelSplit := strings.Split(model, ".")
 	if len(modelSplit) > 1 {
@@ -190,8 +192,9 @@ func main() {
 			model = t.Name()
 		}
 	}
-
-	invalidDataTypeCheck := fmt.Sprintf(INVALID_DATA_TYPE, model)
+	modelObject := fmt.Sprintf("model := %s", model)
+	fmt.Println(modelObject)
+	invalidDataTypeCheck := fmt.Sprintf(INVALID_DATA_TYPE, "model")
 	fmt.Println(invalidDataTypeCheck)
 	// Query builder
 	modelName := strings.Split(t.Name(), ".")
@@ -204,7 +207,7 @@ func main() {
 	queryBuilderStmt := fmt.Sprintf("query, values := querybuilder.BuildInsertQuery(body, \"%s\")", table)
 	fmt.Println(queryBuilderStmt)
 	//Return value
-	returnFieldsStatement := "RETURNING " + strings.Join(returnFields, ",")
+	returnFieldsStatement := "query = query + \"RETURNING " + strings.Join(returnFields, ",") + "\""
 	fmt.Println(returnFieldsStatement)
 	// Execute SQL
 	fmt.Println(EXECUTE_SQL)
@@ -255,7 +258,7 @@ if len(missing) != 0 {
 	`
 
 	INVALID_DATA_TYPE = `
-body, invalidType := parseutil.MapX(body, %s, stringFields, floatField, intField, boolField, jsonField)
+body, invalidType := parseutil.MapX(body, %s, stringField, floatField, intField, boolField, jsonField)
 if len(invalidType) != 0 {
 	log.Println("invalidType", invalidType)
 	return context.JSON(http.StatusBadRequest, invalidType)
