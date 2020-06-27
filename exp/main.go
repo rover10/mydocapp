@@ -64,8 +64,7 @@ func main() {
 
 	//scanline reads all fi
 	scanStatement := ""
-	model := fmt.Sprintf("%s := %s{}", modelVariable, t)
-	fmt.Println(model)
+
 	//nullableVariableDeclartion
 	nullableVariableDeclartion := make([]string, 0)
 	scanStatementArgs := make([]string, 0)
@@ -124,9 +123,24 @@ func main() {
 		// Value assignment to struct
 
 	}
-
+	dx := Doctor{}
+	fmt.Println(dx)
 	// Invalid data type check
-	fmt.Println(INVALID_DATA_TYPE)
+	fmt.Println(t.Name())
+
+	// staff := model.Clinic{}
+	// stf := reflect.TypeOf(staff)
+	// fmt.Println(stf)
+	model := fmt.Sprintf("%s{}", t)
+	modelSplit := strings.Split(model, ".")
+	if len(modelSplit) > 1 {
+		if modelSplit[0] == "main" {
+			model = t.Name()
+		}
+	}
+
+	invalidDataTypeCheck := fmt.Sprintf(INVALID_DATA_TYPE, model)
+	fmt.Println(invalidDataTypeCheck)
 	// Query builder
 	modelName := strings.Split(t.Name(), ".")
 	table := t.Name()
@@ -173,7 +187,7 @@ type D struct {
 
 const (
 	INVALID_DATA_TYPE = `
-body, invalidType := parseutil.MapX(body, appointment, stringFields, floatField, intField, boolField, jsonField)
+body, invalidType := parseutil.MapX(body, %s, stringFields, floatField, intField, boolField, jsonField)
 if len(invalidType) != 0 {
 	log.Println("invalidType", invalidType)
 	return context.JSON(http.StatusBadRequest, invalidType)
