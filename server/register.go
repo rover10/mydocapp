@@ -382,8 +382,56 @@ func (s *Server) BookAppointment(context echo.Context) error {
 }
 
 //RegisterTreatment register a new problem_description, diagnosis, prescription and tests
-func RegisterTreatment(context echo.Context) error {
-	return nil
+func (s *Server) RegisterTreatment(context echo.Context) error {
+	body, err := parseutil.ParseJSON(context)
+	if err != nil {
+		log.Printf("\nError: %+v", err)
+	}
+
+	createRequired := []string{"appointmentId", "doctorId", "patientProblemDescription"}
+	createRemove := []string{"uid"}
+	body = parseutil.RemoveFields(body, createRemove)
+	missing := parseutil.EnsureRequired(body, createRequired)
+	if len(missing) != 0 {
+		log.Println("missing", missing)
+		return context.JSON(http.StatusBadRequest, missing)
+	}
+
+	stringField := []string{"uid", "appointmentId", "doctorId", "patientProblemDescription"}
+	intField := []string{""}
+	floatField := []string{""}
+	boolField := []string{""}
+	JSONField := []string{""}
+	model := model.Treatment{}
+
+	body, invalidType := parseutil.MapX(body, model, stringField, floatField, intField, boolField, JSONField)
+	if len(invalidType) != 0 {
+		log.Println("invalidType", invalidType)
+		return context.JSON(http.StatusBadRequest, invalidType)
+	}
+
+	query, values := querybuilder.BuildInsertQuery(body, "treatment")
+	query = query + "RETURNING uid,appointment_id,doctor_id,patient_problem_description"
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	row := tx.QueryRow(query, values...)
+
+	err = row.Scan(&model.UID, &model.AppointmentID, &model.DoctorID, &model.PatientProblemDesc)
+
+	if err != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("\nDatabase Commit Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	return context.JSON(http.StatusOK, model)
+
 }
 
 //RegisterDoctorReview regsiter a review by the user

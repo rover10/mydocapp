@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	dr := model.TreatmentDetail{}
+	dr := model.Treatment{}
 	//fmt.Println(dr.main.D)
 	nullTypes := map[string]interface{}{
 		"*bool":      "sql.NullBool",
@@ -63,7 +63,7 @@ func main() {
 	boolField := make([]string, 0)
 	intField := make([]string, 0)
 	floatField := make([]string, 0)
-	jsonField := make([]string, 0)
+	JSONField := make([]string, 0)
 	//scanline reads all fi
 	scanStatement := ""
 	//nullableVariableDeclartion
@@ -74,7 +74,7 @@ func main() {
 		fmt.Println(f.Name)
 		tf := fmt.Sprintf("%s", f.Type)
 		key := fmt.Sprintf("%s, %s, %s", f.Name, f.Type, nullTypes[tf])
-
+		jsonField := f.Tag.Get("json")
 		// Create
 		createReq := f.Tag.Get("create-required")
 		createRem := f.Tag.Get("create-remove")
@@ -82,9 +82,9 @@ func main() {
 			fmt.Println("Ambiguous requirement, either of 'create-required' or 'create-remove' should be applied at time.")
 			return
 		} else if createReq == "True" {
-			createRequired = append(createRequired, tf)
+			createRequired = append(createRequired, jsonField)
 		} else if createRem == "True" {
-			createRemove = append(createRemove, tf)
+			createRemove = append(createRemove, jsonField)
 		}
 
 		// Update
@@ -102,15 +102,15 @@ func main() {
 		//textT := fmt.Sprintf("%s", tf)
 		//fmt.Println("\ntext = %s", t)
 		//fmt.Println(fmt.Sprintf("\n---->>>>>%s", textT))
-		jsonField := f.Tag.Get("json")
+
 		dataType := primitiveTypes[tf]
-		if dataType != "int" {
+		if dataType == "int" {
 			intField = append(intField, jsonField)
-		} else if dataType != "float64" {
+		} else if dataType == "float64" {
 			floatField = append(floatField, jsonField)
-		} else if dataType != "string" {
+		} else if dataType == "string" {
 			stringField = append(stringField, jsonField)
-		} else if dataType != "bool" {
+		} else if dataType == "bool" {
 			boolField = append(boolField, jsonField)
 		}
 		queryReturnField := querybuilder.SnakeToCamelCase(f.Tag.Get("json"))
@@ -181,7 +181,7 @@ func main() {
 	boolFieldStmt := fmt.Sprintf("boolField := []string{\"%s\"}", strings.Join(boolField, "\",\""))
 	fmt.Println(boolFieldStmt)
 
-	jsonFieldStmt := fmt.Sprintf("jsonField := []string{\"%s\"}", strings.Join(jsonField, "\",\""))
+	jsonFieldStmt := fmt.Sprintf("JSONField := []string{\"%s\"}", strings.Join(JSONField, "\",\""))
 	fmt.Println(jsonFieldStmt)
 
 	// Create return model object
@@ -248,8 +248,7 @@ if err != nil {
 }
 	`
 
-	REQUIRED_AND_REMOVE = `
-body = parseutil.RemoveFields(body, %s)
+	REQUIRED_AND_REMOVE = `body = parseutil.RemoveFields(body, %s)
 missing := parseutil.EnsureRequired(body, %s)
 if len(missing) != 0 {
 	log.Println("missing", missing)
@@ -258,7 +257,7 @@ if len(missing) != 0 {
 	`
 
 	INVALID_DATA_TYPE = `
-body, invalidType := parseutil.MapX(body, %s, stringField, floatField, intField, boolField, jsonField)
+body, invalidType := parseutil.MapX(body, %s, stringField, floatField, intField, boolField, JSONField)
 if len(invalidType) != 0 {
 	log.Println("invalidType", invalidType)
 	return context.JSON(http.StatusBadRequest, invalidType)
