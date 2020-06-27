@@ -11,15 +11,28 @@ import (
 func main() {
 	dr := Doctor{}
 	//fmt.Println(dr.main.D)
-	types := map[string]interface{}{
-		"*bool":    "sql.NullBool",
-		"*float64": "sql.NullFloat64",
-		"*int32":   "sql.NullInt32",
-		"*int64":   "sql.NullInt64",
-		"*int":     "sql.NullInt64",
-		"*string":  "sql.NullString",
+	nullTypes := map[string]interface{}{
+		"*bool":      "sql.NullBool",
+		"*float64":   "sql.NullFloat64",
+		"*int32":     "sql.NullInt32",
+		"*int64":     "sql.NullInt64",
+		"*int":       "sql.NullInt64",
+		"*string":    "sql.NullString",
+		"*uuid.UUID": "sql.NullString",
 		//"*": "sql.NullTime"
 	}
+
+	primitiveTypes := map[string]interface{}{
+		"bool":      true,
+		"float64":   true,
+		"int32":     true,
+		"int64":     true,
+		"int":       true,
+		"string":    true,
+		"uuid.UUID": true,
+		//"*": "sql.NullTime"
+	}
+
 	//insert-required:true
 	//post-required:true
 	//update-required:true
@@ -62,7 +75,7 @@ func main() {
 		fmt.Println(f.Name)
 
 		tf := fmt.Sprintf("%s", f.Type)
-		key := fmt.Sprintf("%s, %s, %s", f.Name, f.Type, types[tf])
+		key := fmt.Sprintf("%s, %s, %s", f.Name, f.Type, nullTypes[tf])
 		insertReq := f.Tag.Get("insert-required")
 		if insertReq == "True" {
 			insertRequired = append(insertRequired, tf)
@@ -80,7 +93,7 @@ func main() {
 		//fmt.Println(fmt.Sprintf("\n---->>>>>%s", textT))
 
 		if strings.Contains(key, "*") {
-			sqlNullType := types[tf]
+			sqlNullType := nullTypes[tf]
 			if sqlNullType != nil {
 				templateCode := fmt.Sprintf("%s := %s{}", f.Tag.Get("json"), sqlNullType)
 				println("--->>>" + templateCode)
@@ -91,10 +104,11 @@ func main() {
 		} else {
 			//templateCode := fmt.Sprintf("%s := %s{}", f.Tag.Get("json"), tf)
 			//println(templateCode)
-
-			scanStatement = fmt.Sprintf("&%s.%s ", modelVariable, f.Name)
-			scanStatementArgs = append(scanStatementArgs, scanStatement)
-
+			primType := primitiveTypes[tf]
+			if primType != nil {
+				scanStatement = fmt.Sprintf("&%s.%s ", modelVariable, f.Name)
+				scanStatementArgs = append(scanStatementArgs, scanStatement)
+			}
 		}
 
 		//
@@ -113,13 +127,14 @@ func main() {
 }
 
 type Doctor struct {
-	AccountID uuid.UUID `json:"accountId"`
-	Fee       *float64  `json:"float64" required:"True" writeIgnore:"True"`
-	Tee       *int64    `json:"int64"`
-	See       *string   `json:"string"`
-	Int2      *int      `json:"intPtr"`
-	Float32f  *int      `json:"f32"`
-	Integer   int       `json:"integer"`
+	AccountID  uuid.UUID  `json:"accountId"`
+	AccountID2 *uuid.UUID `json:"accountId2"`
+	Fee        *float64   `json:"float64" required:"True" writeIgnore:"True"`
+	Tee        *int64     `json:"int64"`
+	See        *string    `json:"string"`
+	Int2       *int       `json:"intPtr"`
+	Float32f   *int       `json:"f32"`
+	Integer    int        `json:"integer"`
 
 	Dd  D  `json:"dd"`
 	Dd2 *D `json:"dd"`
