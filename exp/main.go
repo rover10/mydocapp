@@ -69,6 +69,8 @@ func main() {
 	scanStatement := "err = row.Scan("
 	model := fmt.Sprintf("%s := %s{}", modelVariable, t)
 	fmt.Println(model)
+	//nullableVariableDeclartion
+	nullableVariableDeclartion := make([]string, 0)
 	scanStatementArgs := make([]string, 0)
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
@@ -95,8 +97,9 @@ func main() {
 		if strings.Contains(key, "*") {
 			sqlNullType := nullTypes[tf]
 			if sqlNullType != nil {
-				templateCode := fmt.Sprintf("%s := %s{}", f.Tag.Get("json"), sqlNullType)
-				println("--->>>" + templateCode)
+				nullableVariable := fmt.Sprintf("%s := %s{}", f.Tag.Get("json"), sqlNullType)
+				println("--->>>" + nullableVariable)
+				nullableVariableDeclartion = append(nullableVariableDeclartion, nullableVariable)
 				scanStatement = fmt.Sprintf("&%s ", f.Tag.Get("json"))
 				scanStatementArgs = append(scanStatementArgs, scanStatement)
 			}
@@ -122,7 +125,24 @@ func main() {
 		// Value assignment to struct
 
 	}
-	fmt.Println(strings.Join(scanStatementArgs, ","))
+	for _, v := range nullableVariableDeclartion {
+		fmt.Println(v)
+	}
+	scanResult := "err = row.Scan(" + strings.Join(scanStatementArgs, ",") + ")"
+	fmt.Println(scanResult)
+	afterScan := `	
+if err != nil {
+	log.Printf("\nDatabase Error: %+v", err)
+	return context.JSON(http.StatusInternalServerError, err)
+}
+err = tx.Commit()
+if err != nil {
+	log.Printf("\nDatabase Commit Error: %+v", err)
+	return context.JSON(http.StatusInternalServerError, err)
+}
+return context.JSON(http.StatusOK, model)
+	`
+	fmt.Println(afterScan)
 	fmt.Println("--->")
 }
 
