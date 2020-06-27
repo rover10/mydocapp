@@ -23,14 +23,27 @@ func main() {
 		//"*": "sql.NullTime"
 	}
 
+	stringField := make([]string, 0)
+	boolField := make([]string, 0)
+	intField := make([]string, 0)
+	floatField := make([]string, 0)
+	jsonField := make([]string, 0)
+
 	primitiveTypes := map[string]interface{}{
-		"bool":      true,
-		"float64":   true,
-		"int32":     true,
-		"int64":     true,
-		"int":       true,
-		"string":    true,
-		"uuid.UUID": true,
+		"bool":       "bool",
+		"float64":    "float64",
+		"int32":      "int",
+		"int64":      "int",
+		"int":        "int",
+		"string":     "string",
+		"uuid.UUID":  "string",
+		"*bool":      "bool",
+		"*float64":   "float64",
+		"*int32":     "int",
+		"*int64":     "int",
+		"*int":       "int",
+		"*string":    "string",
+		"*uuid.UUID": "string",
 		//"*": "sql.NullTime"
 	}
 
@@ -53,6 +66,9 @@ func main() {
 	//return fields
 	returnFields := make([]string, 0)
 
+	//
+
+	//
 	// Scan values
 	// snake := convertToSnake(tag)
 	// generate get returning all fields
@@ -89,24 +105,35 @@ func main() {
 		//textT := fmt.Sprintf("%s", tf)
 		//fmt.Println("\ntext = %s", t)
 		//fmt.Println(fmt.Sprintf("\n---->>>>>%s", textT))
-		jsonField := querybuilder.SnakeToCamelCase(f.Tag.Get("json"))
+		jsonField := f.Tag.Get("json")
+		dataType := primitiveTypes[tf]
+		if dataType != "int" {
+			intField = append(intField, jsonField)
+		} else if dataType != "float64" {
+			floatField = append(floatField, jsonField)
+		} else if dataType != "string" {
+			stringField = append(stringField, jsonField)
+		} else if dataType != "bool" {
+			boolField = append(boolField, jsonField)
+		}
+
+		queryReturnField := querybuilder.SnakeToCamelCase(f.Tag.Get("json"))
 		if strings.Contains(key, "*") {
 			sqlNullType := nullTypes[tf]
 			if sqlNullType != nil {
 				nullableVariable := fmt.Sprintf("%s := %s{}", jsonField, sqlNullType)
 				println("--->>>" + nullableVariable)
-				returnFields = append(returnFields, jsonField)
+				returnFields = append(returnFields, queryReturnField)
 				nullableVariableDeclartion = append(nullableVariableDeclartion, nullableVariable)
 				scanStatement = fmt.Sprintf("&%s ", f.Tag.Get("json"))
 				scanStatementArgs = append(scanStatementArgs, scanStatement)
 			}
-
 		} else {
 			//templateCode := fmt.Sprintf("%s := %s{}", f.Tag.Get("json"), tf)
 			//println(templateCode)
 			primType := primitiveTypes[tf]
 			if primType != nil {
-				returnFields = append(returnFields, jsonField)
+				returnFields = append(returnFields, queryReturnField)
 				scanStatement = fmt.Sprintf("&%s.%s ", modelVariable, f.Name)
 				scanStatementArgs = append(scanStatementArgs, scanStatement)
 			}
@@ -123,14 +150,23 @@ func main() {
 		// Value assignment to struct
 
 	}
-	dx := Doctor{}
-	fmt.Println(dx)
-	// Invalid data type check
-	fmt.Println(t.Name())
 
-	// staff := model.Clinic{}
-	// stf := reflect.TypeOf(staff)
-	// fmt.Println(stf)
+	// Datatype statements
+	stringFieldStmt := fmt.Sprintf("stringField := []string{\"%s\"}", strings.Join(stringField, "\",\""))
+	fmt.Println(stringFieldStmt)
+
+	intFieldStmt := fmt.Sprintf("intField := []string{\"%s\"}", strings.Join(intField, "\",\""))
+	fmt.Println(intFieldStmt)
+
+	floatFieldStmt := fmt.Sprintf("floatField := []string{\"%s\"}", strings.Join(floatField, "\",\""))
+	fmt.Println(floatFieldStmt)
+
+	boolFieldStmt := fmt.Sprintf("boolField := []string{\"%s\"}", strings.Join(boolField, "\",\""))
+	fmt.Println(boolFieldStmt)
+
+	jsonFieldStmt := fmt.Sprintf("jsonField := []string{\"%s\"}", strings.Join(jsonField, "\",\""))
+	fmt.Println(jsonFieldStmt)
+	//
 	model := fmt.Sprintf("%s{}", t)
 	modelSplit := strings.Split(model, ".")
 	if len(modelSplit) > 1 {
