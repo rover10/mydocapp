@@ -434,8 +434,55 @@ func (s *Server) RegisterTreatment(context echo.Context) error {
 }
 
 //RegisterDoctorReview regsiter a review by the user
-func RegisterDoctorReview(context echo.Context) error {
-	return nil
+func (s *Server) RegisterDoctorReview(context echo.Context) error {
+	body, err := parseutil.ParseJSON(context)
+	if err != nil {
+		log.Printf("\nError: %+v", err)
+	}
+
+	createRequired := []string{"appointmentId", "reviewerId", "doctorId", "rating", "review"}
+	createRemove := []string{"createdOn"}
+	body = parseutil.RemoveFields(body, createRemove)
+	missing := parseutil.EnsureRequired(body, createRequired)
+	if len(missing) != 0 {
+		log.Println("missing", missing)
+		return context.JSON(http.StatusBadRequest, missing)
+	}
+
+	stringField := []string{"appointmentId", "reviewerId", "doctorId", "review", "createdOn"}
+	intField := []string{""}
+	floatField := []string{"rating"}
+	boolField := []string{""}
+	JSONField := []string{""}
+	model := model.DoctorReview{}
+
+	body, invalidType := parseutil.MapX(body, model, stringField, floatField, intField, boolField, JSONField)
+	if len(invalidType) != 0 {
+		log.Println("invalidType", invalidType)
+		return context.JSON(http.StatusBadRequest, invalidType)
+	}
+
+	query, values := querybuilder.BuildInsertQuery(body, "doctor_review")
+	query = query + "RETURNING appointment_id,reviewer_id,doctor_id,rating,review,created_on"
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	row := tx.QueryRow(query, values...)
+
+	err = row.Scan(&model.AppointmentID, &model.ReviewerID, &model.DoctorID, &model.Rating, &model.Review, &model.CreatedOn)
+
+	if err != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("\nDatabase Commit Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	return context.JSON(http.StatusOK, model)
 }
 
 //UploadUserDocument upload a new document by user

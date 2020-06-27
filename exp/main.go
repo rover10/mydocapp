@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	dr := model.Treatment{}
+	dr := model.DoctorReview{}
 	//fmt.Println(dr.main.D)
 	nullTypes := map[string]interface{}{
 		"*bool":      "sql.NullBool",

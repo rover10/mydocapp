@@ -2,6 +2,7 @@ package parseutil
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 
 	"github.com/labstack/echo"
@@ -43,6 +44,7 @@ func EnsureRequired(body map[string]interface{}, requiredFields []string) []stri
 	missing := make([]string, 0)
 	if body != nil {
 		for _, v := range requiredFields {
+			fmt.Println("--> " + v)
 			if body[v] == nil {
 				missing = append(missing, v)
 			}

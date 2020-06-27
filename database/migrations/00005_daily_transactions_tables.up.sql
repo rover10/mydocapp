@@ -4,7 +4,7 @@ create table doctor_observation(treatment_id uuid references treatment(uid) not 
 create table prescription(treatment_id uuid references treatment(uid) not null, prescription varchar, created_on timestamp default now() not null, doctor_id uuid references users(uid) not null, note varchar not null, is_active boolean);
 create table patient_test(treatment_id uuid references treatment(uid) not null, test int references test(id) not null, description varchar, doc_url varchar, created_on timestamp not null default now(), doctor_id uuid references users(uid) not null);
 
-create table doctor_review(appointment_id uuid references appointment(uid), reviewer_id uuid references users(uid), doctor_id uuid references users(uid), rating float check (rating >= 0) check (rating <= 5), review varchar, review_date timestamp); -- unique(booking_id, doctor_id) single_reiew per booking
+create table doctor_review(appointment_id uuid references appointment(uid), reviewer_id uuid references users(uid), doctor_id uuid references users(uid), rating float check (rating >= 0) check (rating <= 5), review varchar, created_on timestamp);
 create unique index if not exists unique_appointment_id_and_doctor_id on doctor_review(appointment_id, doctor_id);
 
 create table user_document(uid uuid DEFAULT uuid_generate_v4() primary key, user_uid uuid references users(uid) not null, doc_type_id integer not null, url varchar not null, date_created timestamp);
