@@ -23,6 +23,7 @@ func Api(server *server.Server) {
 	server.Router.POST(path.Join(server.APIPath, "/v1/doctorreview"), server.RegisterDoctorReview)
 	server.Router.POST(path.Join(server.APIPath, "/v1/staffrole"), server.AssignStaffRole)
 	server.Router.POST(path.Join(server.APIPath, "/v1/uploaddocument"), server.UploadUserDocument)
+	server.Router.POST(path.Join(server.APIPath, "/v1/testreport"), server.AddTestReport)
 
 	server.Router.Renderer = server
 	server.Router.HideBanner = true

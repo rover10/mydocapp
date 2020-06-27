@@ -538,8 +538,57 @@ func (s *Server) UploadUserDocument(context echo.Context) error {
 }
 
 //AddTestReport register a new test report of a patient
-func AddTestReport(context echo.Context) error {
-	return nil
+func (s *Server) AddTestReport(context echo.Context) error {
+
+	body, err := parseutil.ParseJSON(context)
+	if err != nil {
+		log.Printf("\nError: %+v", err)
+	}
+
+	createRequired := []string{"treatmentId", "docId"}
+	createRemove := []string{"uid", "createdOn", "updatedOn"}
+	body = parseutil.RemoveFields(body, createRemove)
+	missing := parseutil.EnsureRequired(body, createRequired)
+	if len(missing) != 0 {
+		log.Println("missing", missing)
+		return context.JSON(http.StatusBadRequest, missing)
+	}
+
+	stringField := []string{"uid", "treatmentId", "docId", "createdOn", "updatedOn"}
+	intField := []string{""}
+	floatField := []string{""}
+	boolField := []string{""}
+	JSONField := []string{""}
+	model := model.TestReport{}
+
+	body, invalidType := parseutil.MapX(body, model, stringField, floatField, intField, boolField, JSONField)
+	if len(invalidType) != 0 {
+		log.Println("invalidType", invalidType)
+		return context.JSON(http.StatusBadRequest, invalidType)
+	}
+
+	query, values := querybuilder.BuildInsertQuery(body, "test_report")
+	query = query + "RETURNING uid,treatment_id,doc_id,created_on,updated_on"
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	row := tx.QueryRow(query, values...)
+
+	updatedOn := sql.NullString{}
+	err = row.Scan(&model.UID, &model.TreatmentID, &model.DocumentID, &model.CreatedOn, &updatedOn)
+
+	if err != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("\nDatabase Commit Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	return context.JSON(http.StatusOK, model)
 }
 
 //AssignStaffRole assign a new role to a staff
