@@ -13,6 +13,6 @@ create table staff_role(user_id uuid references users(uid) not null,clinic_id uu
 -- one staff has disticnt role
 create unique index if not exists unique_staff_id_role_id_staff_role on staff_role(user_id, role_id);
 
-create table doctor_qualification(user_uid uuid references users(uid) not null, qualification_id integer references qualification(id), date_created timestamp default now() not null, certificate_doc uuid references user_document(uid), verified boolean not null default false);
- 
+create table doctor_qualification(user_id uuid references users(uid) not null, qualification_id integer references qualification(id) not null, created_on timestamp default now() not null, certificate_doc uuid references user_document(uid) not null, verified boolean not null default false);
+  
 drop table appointment , treatment_detail , doctor_review , users, test_report , staff_role , doctor_qualification cascade;

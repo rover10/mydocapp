@@ -644,6 +644,53 @@ func (s *Server) AssignStaffRole(context echo.Context) error {
 }
 
 //AddDoctorQualification add doctor qualification
-func AddDoctorQualification(context echo.Context) error {
-	return nil
+func (s *Server) AddDoctorQualification(context echo.Context) error {
+	body, err := parseutil.ParseJSON(context)
+	if err != nil {
+		log.Printf("\nError: %+v", err)
+	}
+
+	createRequired := []string{"userId", "qualificationId", "certificateDoc"}
+	createRemove := []string{"verified"}
+	body = parseutil.RemoveFields(body, createRemove)
+	missing := parseutil.EnsureRequired(body, createRequired)
+	if len(missing) != 0 {
+		log.Println("missing", missing)
+		return context.JSON(http.StatusBadRequest, missing)
+	}
+
+	stringField := []string{"userId", "createdOn", "certificateDoc"}
+	intField := []string{"qualificationId"}
+	floatField := []string{""}
+	boolField := []string{"verified"}
+	JSONField := []string{""}
+	model := model.DoctorQualification{}
+
+	body, invalidType := parseutil.MapX(body, model, stringField, floatField, intField, boolField, JSONField)
+	if len(invalidType) != 0 {
+		log.Println("invalidType", invalidType)
+		return context.JSON(http.StatusBadRequest, invalidType)
+	}
+
+	query, values := querybuilder.BuildInsertQuery(body, "doctor_qualification")
+	query = query + "RETURNING user_id,qualification_id,created_on,certificate_doc,verified"
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	row := tx.QueryRow(query, values...)
+
+	err = row.Scan(&model.UserID, &model.QualificationID, &model.CreatedOn, &model.CertificateDoc, &model.Verified)
+
+	if err != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("\nDatabase Commit Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	return context.JSON(http.StatusOK, model)
 }
