@@ -145,6 +145,8 @@ func main() {
 
 	}
 
+	// Parse request body
+	fmt.Println(PARSE_REQUEST_BODY)
 	// Required and remove field for create
 	createRequiredStmt := fmt.Sprintf("createRequired := []string{\"%s\"}", strings.Join(createRequired, "\",\""))
 	createRemoveStmt := fmt.Sprintf("createRemove := []string{\"%s\"}", strings.Join(createRemove, "\",\""))
@@ -236,6 +238,13 @@ type D struct {
 }
 
 const (
+	PARSE_REQUEST_BODY = `
+body, err := parseutil.ParseJSON(context)
+if err != nil {
+	log.Printf("\nError: %+v", err)
+}
+	`
+
 	REQUIRED_AND_REMOVE = `
 body = parseutil.RemoveFields(body, %s)
 missing := parseutil.EnsureRequired(body, %s)
