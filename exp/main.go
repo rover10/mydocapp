@@ -63,7 +63,7 @@ func main() {
 	modelVariable := "model"
 
 	//scanline reads all fi
-	scanStatement := "err = row.Scan("
+	scanStatement := ""
 	model := fmt.Sprintf("%s := %s{}", modelVariable, t)
 	fmt.Println(model)
 	//nullableVariableDeclartion
@@ -125,6 +125,8 @@ func main() {
 
 	}
 
+	// Invalid data type check
+	fmt.Println(INVALID_DATA_TYPE)
 	// Query builder
 	modelName := strings.Split(t.Name(), ".")
 	table := t.Name()
@@ -170,13 +172,20 @@ type D struct {
 }
 
 const (
+	INVALID_DATA_TYPE = `
+body, invalidType := parseutil.MapX(body, appointment, stringFields, floatField, intField, boolField, jsonField)
+if len(invalidType) != 0 {
+	log.Println("invalidType", invalidType)
+	return context.JSON(http.StatusBadRequest, invalidType)
+}
+`
 	EXECUTE_SQL = `
 tx, err := s.DB.Begin()
 if err != nil {
 	return context.JSON(http.StatusInternalServerError, err)
 }
 row := tx.QueryRow(query, values...)
-	`
+`
 	AFTER_RESULT_SCAN = `	
 if err != nil {
 	log.Printf("\nDatabase Error: %+v", err)
@@ -188,7 +197,7 @@ if err != nil {
 	return context.JSON(http.StatusInternalServerError, err)
 }
 return context.JSON(http.StatusOK, model)
-	`
+`
 )
 
 /*

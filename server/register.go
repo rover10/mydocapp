@@ -337,9 +337,11 @@ func (s *Server) BookAppointment(context echo.Context) error {
 	stringFields := []string{"accountId", "clinicId", "patientId", "slotDateTime", "contactPhone"}
 	boolField := []string{"noShow"}
 	intField := []string{"diseaseId"}
+	floatField := []string{}
+	jsonField := []string{}
 	appointment := model.Appointment{}
 
-	body, invalidType := parseutil.MapX(body, appointment, stringFields, nil, intField, boolField, nil)
+	body, invalidType := parseutil.MapX(body, appointment, stringFields, floatField, intField, boolField, jsonField)
 	if len(invalidType) != 0 {
 		log.Println("invalidType", invalidType)
 		return context.JSON(http.StatusBadRequest, invalidType)
