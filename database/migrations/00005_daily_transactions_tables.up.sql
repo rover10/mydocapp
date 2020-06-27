@@ -7,7 +7,7 @@ create table patient_test(treatment_id uuid references treatment(uid) not null, 
 create table doctor_review(appointment_id uuid references appointment(uid), reviewer_id uuid references users(uid), doctor_id uuid references users(uid), rating float check (rating >= 0) check (rating <= 5), review varchar, created_on timestamp default now());
 create unique index if not exists unique_appointment_id_and_doctor_id on doctor_review(appointment_id, doctor_id);
 
-create table user_document(uid uuid DEFAULT uuid_generate_v4() primary key, user_uid uuid references users(uid) not null, doc_type_id integer not null, url varchar not null, date_created timestamp);
+create table user_document(uid uuid DEFAULT uuid_generate_v4() primary key, user_id uuid references users(uid) not null, doc_type_id integer not null, url varchar not null, created_on timestamp default now() not null);
 create table test_report(uid uuid DEFAULT uuid_generate_v4() primary key, appointment_id uuid references appointment(uid), created_on timestamp, updated_on timestamp, doc_id uuid references user_document(uid)); 
 create table staff_role(user_id uuid references users(uid) not null,clinic_id uuid references clinic(uid) not null, role_id integer references roles(id) not null, created_on timestamp default now() not null, is_active boolean not null default true);
 -- one staff has disticnt role

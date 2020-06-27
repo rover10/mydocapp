@@ -486,8 +486,55 @@ func (s *Server) RegisterDoctorReview(context echo.Context) error {
 }
 
 //UploadUserDocument upload a new document by user
-func UploadUserDocument(context echo.Context) error {
-	return nil
+func (s *Server) UploadUserDocument(context echo.Context) error {
+	body, err := parseutil.ParseJSON(context)
+	if err != nil {
+		log.Printf("\nError: %+v", err)
+	}
+
+	createRequired := []string{"userId", "docTypeId", "url"}
+	createRemove := []string{"uid", "createdOn"}
+	body = parseutil.RemoveFields(body, createRemove)
+	missing := parseutil.EnsureRequired(body, createRequired)
+	if len(missing) != 0 {
+		log.Println("missing", missing)
+		return context.JSON(http.StatusBadRequest, missing)
+	}
+
+	stringField := []string{"uid", "userId", "url", "createdOn"}
+	intField := []string{"docTypeId"}
+	floatField := []string{""}
+	boolField := []string{""}
+	JSONField := []string{""}
+	model := model.UserDocument{}
+
+	body, invalidType := parseutil.MapX(body, model, stringField, floatField, intField, boolField, JSONField)
+	if len(invalidType) != 0 {
+		log.Println("invalidType", invalidType)
+		return context.JSON(http.StatusBadRequest, invalidType)
+	}
+
+	query, values := querybuilder.BuildInsertQuery(body, "user_document")
+	query = query + "RETURNING uid,user_id,doc_type_id,url,created_on"
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	row := tx.QueryRow(query, values...)
+
+	err = row.Scan(&model.UID, &model.UserID, &model.DocumentTypeID, &model.URL, &model.CreatedOn)
+
+	if err != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("\nDatabase Commit Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	return context.JSON(http.StatusOK, model)
 }
 
 //AddTestReport register a new test report of a patient
