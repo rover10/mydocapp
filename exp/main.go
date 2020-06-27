@@ -125,6 +125,17 @@ func main() {
 
 	}
 
+	// Query builder
+	modelName := strings.Split(t.Name(), ".")
+	table := t.Name()
+	if len(modelName) == 2 {
+		table = modelName[1]
+	}
+	table = querybuilder.SnakeToCamelCase(table)
+	table = strings.TrimLeft(table, "_")
+	queryBuilderStmt := fmt.Sprintf("query, values := querybuilder.BuildInsertQuery(body, \"%s\")", table)
+	fmt.Println(queryBuilderStmt)
+	//Return value
 	returnFieldsStatement := "RETURNING " + strings.Join(returnFields, ",")
 	fmt.Println(returnFieldsStatement)
 	// Execute SQL
@@ -150,9 +161,8 @@ type Doctor struct {
 	Int2       *int       `json:"intPtr"`
 	Float32f   *int       `json:"f32"`
 	Integer    int        `json:"integer"`
-
-	Dd  D  `json:"dd"`
-	Dd2 *D `json:"dd"`
+	Dd         D          `json:"dd"`
+	Dd2        *D         `json:"ddPtr"`
 }
 
 type D struct {
