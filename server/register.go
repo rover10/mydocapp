@@ -64,6 +64,7 @@ func (s *Server) RegisterUser(context echo.Context) error {
 	err = tx.Commit()
 	if err != nil {
 		log.Printf("\nDatabase Commit Error: %+v", err)
+		tx.Rollback()
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 	// Parse response into {model.User}: ParseRow(row, returnfields)
@@ -132,6 +133,7 @@ func (s *Server) RegisterPatient(context echo.Context) error {
 	err = tx.Commit()
 	if err != nil {
 		log.Printf("\nDatabase Commit Error: %+v", err)
+		tx.Rollback()
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 	if lastName.Valid {
@@ -190,6 +192,7 @@ func (s *Server) RegisterDoctor(context echo.Context) error {
 	err = tx.Commit()
 	if err != nil {
 		log.Printf("\nDatabase Commit Error: %+v", err)
+		tx.Rollback()
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 	if fee.Valid {
@@ -251,6 +254,7 @@ func (s *Server) RegisterClinic(context echo.Context) error {
 	err = tx.Commit()
 	if err != nil {
 		log.Printf("\nDatabase Commit Error: %+v", err)
+		tx.Rollback()
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 
@@ -305,6 +309,7 @@ func (s *Server) RegisterStaff(context echo.Context) error {
 	err = tx.Commit()
 	if err != nil {
 		log.Printf("\nDatabase Commit Error: %+v", err)
+		tx.Rollback()
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 
@@ -361,6 +366,7 @@ func (s *Server) BookAppointment(context echo.Context) error {
 	err = tx.Commit()
 	if err != nil {
 		log.Printf("\nDatabase Commit Error: %+v", err)
+		tx.Rollback()
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 	if diseaseID.Valid {

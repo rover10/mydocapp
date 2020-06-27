@@ -8,6 +8,28 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+const (
+	EXECUTE_SQL = `
+tx, err := s.DB.Begin()
+if err != nil {
+	return context.JSON(http.StatusInternalServerError, err)
+}
+row := tx.QueryRow(query, values...)
+	`
+	AFTER_RESULT_SCAN = `	
+if err != nil {
+	log.Printf("\nDatabase Error: %+v", err)
+	return context.JSON(http.StatusInternalServerError, err)
+}
+err = tx.Commit()
+if err != nil {
+	log.Printf("\nDatabase Commit Error: %+v", err)
+	return context.JSON(http.StatusInternalServerError, err)
+}
+return context.JSON(http.StatusOK, model)
+	`
+)
+
 func main() {
 	dr := Doctor{}
 	//fmt.Println(dr.main.D)
@@ -125,24 +147,17 @@ func main() {
 		// Value assignment to struct
 
 	}
+
+	// Execute SQL
+	fmt.Println(EXECUTE_SQL)
+	//Nullable variable declaration
 	for _, v := range nullableVariableDeclartion {
 		fmt.Println(v)
 	}
+	//Scan query result
 	scanResult := "err = row.Scan(" + strings.Join(scanStatementArgs, ",") + ")"
 	fmt.Println(scanResult)
-	afterScan := `	
-if err != nil {
-	log.Printf("\nDatabase Error: %+v", err)
-	return context.JSON(http.StatusInternalServerError, err)
-}
-err = tx.Commit()
-if err != nil {
-	log.Printf("\nDatabase Commit Error: %+v", err)
-	return context.JSON(http.StatusInternalServerError, err)
-}
-return context.JSON(http.StatusOK, model)
-	`
-	fmt.Println(afterScan)
+	fmt.Println(AFTER_RESULT_SCAN)
 	fmt.Println("--->")
 }
 
