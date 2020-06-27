@@ -2,7 +2,10 @@ package querybuilder
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
+
+	"github.com/rover10/mydocapp.git/model"
 )
 
 //BuildInsertQuery build a insert query
@@ -29,7 +32,9 @@ func BuildInsertQuery(body map[string]interface{}, table string) (string, []inte
 	insert = insert + "("
 	insert = insert + strings.Join(placeholders, ",")
 	insert = insert + ")"
-
+	t := reflect.TypeOf(model.Doctor{})
+	t.String()
+	t.PkgPath()
 	return insert, values
 }
 
