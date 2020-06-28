@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,14 +11,18 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
 	"github.com/rover10/mydocapp.git/config"
+	"github.com/rover10/mydocapp.git/database"
 )
 
 type Server struct {
 	config.Config
-	Router    *echo.Echo
-	Templates *template.Template
-	DB        *sql.DB
+	Router          *echo.Echo
+	Templates       *template.Template
+	DB              *database.DocDB
+	SECRET_PASSWORD string
 }
+
+var SECRET_PASSWORD = "Ra@@ndom&%#@%(%5*&%^&Value(&*HJGJGJggHHJKJBJ"
 
 // Start - This function will start the echo server
 func (s *Server) Start() error {
@@ -57,10 +60,11 @@ func Templates(webDir string) *template.Template {
 // NewServer - Constructor function for server
 func NewServer(cfg config.Config) *Server {
 	server := &Server{
-		Config:    cfg,
-		Router:    echo.New(),
-		Templates: Templates("web"),
-		DB:        nil,
+		Config:          cfg,
+		Router:          echo.New(),
+		Templates:       Templates("web"),
+		DB:              nil,
+		SECRET_PASSWORD: "Ra@@ndom&%#@%(%5*&%^&Value(&*HJGJGJggHHJKJBJ",
 	}
 	return server
 }

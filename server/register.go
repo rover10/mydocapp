@@ -2,10 +2,13 @@ package server
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"github.com/rover10/mydocapp.git/model"
 	"github.com/rover10/mydocapp.git/parseutil"
@@ -25,16 +28,17 @@ func (s *Server) RegisterUser(context echo.Context) error {
 	}
 	//
 	fmt.Println(body)
-	required := []string{"firstName", "email", "phone", "genderId", "age", "countryId", "userType"}
-	remove := []string{"uid", "createdOn", "updatedOn", "isActive"}
-	body = parseutil.RemoveFields(body, remove)
+	required := []string{"firstName", "password", "retypedPassword", "email", "phone", "genderId", "age", "countryId", "userType"}
+	remove := []string{"uid", "retypedPassword", "createdOn", "updatedOn", "isActive"}
+
 	missing := parseutil.EnsureRequired(body, required)
+	body = parseutil.RemoveFields(body, remove)
 	if len(missing) != 0 {
 		log.Println("missing", missing)
 		return context.JSON(http.StatusBadRequest, missing)
 	}
 
-	stringFields := []string{"firstName", "lastName", "phone", "email"}
+	stringFields := []string{"firstName", "password", "lastName", "phone", "email"}
 	intFields := []string{"userType", "genderId", "countryId"}
 	user := model.User{}
 	body, invalidType := parseutil.MapX(body, user, stringFields, nil, intFields, nil, nil)
@@ -51,7 +55,7 @@ func (s *Server) RegisterUser(context echo.Context) error {
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
-	tx, err := s.DB.Begin()
+	tx, err := s.DB.DB.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -118,7 +122,7 @@ func (s *Server) RegisterPatient(context echo.Context) error {
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
-	tx, err := s.DB.Begin()
+	tx, err := s.DB.DB.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -177,7 +181,7 @@ func (s *Server) RegisterDoctor(context echo.Context) error {
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
-	tx, err := s.DB.Begin()
+	tx, err := s.DB.DB.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -240,7 +244,7 @@ func (s *Server) RegisterClinic(context echo.Context) error {
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
-	tx, err := s.DB.Begin()
+	tx, err := s.DB.DB.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -295,7 +299,7 @@ func (s *Server) RegisterStaff(context echo.Context) error {
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
-	tx, err := s.DB.Begin()
+	tx, err := s.DB.DB.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -354,7 +358,7 @@ func (s *Server) BookAppointment(context echo.Context) error {
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
-	tx, err := s.DB.Begin()
+	tx, err := s.DB.DB.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -413,7 +417,7 @@ func (s *Server) RegisterTreatment(context echo.Context) error {
 	query, values := querybuilder.BuildInsertQuery(body, "treatment")
 	query = query + "RETURNING uid,appointment_id,doctor_id,patient_problem_description,created_on"
 
-	tx, err := s.DB.Begin()
+	tx, err := s.DB.DB.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -465,7 +469,7 @@ func (s *Server) RegisterDoctorReview(context echo.Context) error {
 	query, values := querybuilder.BuildInsertQuery(body, "doctor_review")
 	query = query + "RETURNING appointment_id,reviewer_id,doctor_id,rating,review,created_on"
 
-	tx, err := s.DB.Begin()
+	tx, err := s.DB.DB.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -517,7 +521,7 @@ func (s *Server) UploadUserDocument(context echo.Context) error {
 	query, values := querybuilder.BuildInsertQuery(body, "user_document")
 	query = query + "RETURNING uid,user_id,doc_type_id,url,created_on"
 
-	tx, err := s.DB.Begin()
+	tx, err := s.DB.DB.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -570,7 +574,7 @@ func (s *Server) AddTestReport(context echo.Context) error {
 	query, values := querybuilder.BuildInsertQuery(body, "test_report")
 	query = query + "RETURNING uid,treatment_id,doc_id,created_on,updated_on"
 
-	tx, err := s.DB.Begin()
+	tx, err := s.DB.DB.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -623,7 +627,7 @@ func (s *Server) AssignStaffRole(context echo.Context) error {
 	query, values := querybuilder.BuildInsertQuery(body, "staff_role")
 	query = query + "RETURNING user_id,role_id,clinic_id,created_on,is_active"
 
-	tx, err := s.DB.Begin()
+	tx, err := s.DB.DB.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -675,7 +679,7 @@ func (s *Server) AddDoctorQualification(context echo.Context) error {
 	query, values := querybuilder.BuildInsertQuery(body, "doctor_qualification")
 	query = query + "RETURNING user_id,qualification_id,created_on,certificate_doc,verified"
 
-	tx, err := s.DB.Begin()
+	tx, err := s.DB.DB.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -693,4 +697,68 @@ func (s *Server) AddDoctorQualification(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 	return context.JSON(http.StatusOK, model)
+}
+
+func (s *Server) Login(context echo.Context) error {
+	body, err := parseutil.ParseJSON(context)
+	if err != nil {
+		log.Printf("\nError: %+v", err)
+	}
+	username := body["username"] //context.FormValue("username")
+	password := body["password"] //context.FormValue("password")
+	// Check in your db if the user exists or not
+	email := username //context.Get("username")
+	emailStr, ok := email.(string)
+	fmt.Println("->>" + emailStr)
+	fmt.Println(email)
+	fmt.Println(context)
+
+	if ok && emailStr != "" {
+		fmt.Println("->> ))" + emailStr)
+		user, err := s.DB.RetriveUserCred(emailStr)
+		if err == sql.ErrNoRows {
+			return errors.New("User does not exit")
+		} else if err != nil {
+			return errors.New("Server error")
+		}
+		fmt.Println("->> 2))" + emailStr)
+		if username == user.Email && password == user.Password {
+			fmt.Println("->> )) 3" + emailStr)
+			// Create token
+			token := jwt.New(jwt.SigningMethodHS256)
+			// Set claims
+			// This is the information which frontend can use
+			// The backend can also decode the token and get admin etc.
+			claims := token.Claims.(jwt.MapClaims)
+			claims["name"] = user.FirstName
+			claims["uid"] = user.UID
+			claims["name"] = user.Email
+			claims["admin"] = true
+			claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+			// Generate encoded token and send it as response.
+			// The signing string should be secret (a generated UUID          works too)
+
+			t, err := token.SignedString([]byte(SECRET_PASSWORD))
+			if err != nil {
+				return err
+			}
+			fmt.Println("->> )) 3" + emailStr)
+			// Generate encoded refrest token and send it as response.
+			refreshToken := jwt.New(jwt.SigningMethodHS256)
+			rtClaims := refreshToken.Claims.(jwt.MapClaims)
+			rtClaims["sub"] = 1
+			rtClaims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+			rt, err := refreshToken.SignedString([]byte(SECRET_PASSWORD))
+			if err != nil {
+				return err
+			}
+
+			return context.JSON(http.StatusOK, map[string]string{
+				"token":         t,
+				"refresh_token": rt,
+			})
+		}
+	}
+
+	return echo.ErrUnauthorized
 }

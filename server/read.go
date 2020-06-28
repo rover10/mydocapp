@@ -9,11 +9,6 @@ func Doctor(context echo.Context) error {
 	return nil
 }
 
-// User read a user detail
-func User(context echo.Context) error {
-	return nil
-}
-
 //Clinic read a clinic detail
 func Clinic(context echo.Context) error {
 	return nil

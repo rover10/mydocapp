@@ -8,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/rover10/mydocapp.git/api"
 	"github.com/rover10/mydocapp.git/config"
+	"github.com/rover10/mydocapp.git/database"
 	"github.com/rover10/mydocapp.git/server"
 )
 
@@ -24,10 +25,12 @@ func main() {
 	config.DBPassword = "root"
 	config.DBUser = "postgres"
 	config.Host = "localhost"
-	config.Port = 3000
+	config.Port = 3001
 	config.WebDir = "web"
 	server := server.NewServer(config)
-	server.DB = db
+	docdb := database.DocDB{}
+	docdb.DB = db
+	server.DB = &docdb
 	api.Api(server)
 	err = server.Start()
 	if err != nil {
