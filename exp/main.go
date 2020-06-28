@@ -41,18 +41,11 @@ func main() {
 		//"*": "sql.NullTime"
 	}
 
-	//create-required:true
-	//update-required:true
-
-	//return all the fields in all the case
 	//tag := f.Tag.Get("insert-required")
 	createRequired := make([]string, 0)
 	createRemove := make([]string, 0)
-	//tag := f.Tag.Get("post-require")
-	//tag := f.Tag.Get("update-required")
 	updateRequired := make([]string, 0)
 	updateRemove := make([]string, 0)
-
 	//return fields
 	returnFields := make([]string, 0)
 	// Scan values
@@ -86,7 +79,6 @@ func main() {
 		} else if createRem == "True" {
 			createRemove = append(createRemove, jsonField)
 		}
-
 		// Update
 		updateReq := f.Tag.Get("update-required")
 		updateRem := f.Tag.Get("update-remove")
@@ -98,10 +90,6 @@ func main() {
 		} else if updateRem == "True" {
 			updateRemove = append(updateRemove, tf)
 		}
-		//For pointer type NullType
-		//textT := fmt.Sprintf("%s", tf)
-		//fmt.Println("\ntext = %s", t)
-		//fmt.Println(fmt.Sprintf("\n---->>>>>%s", textT))
 
 		dataType := primitiveTypes[tf]
 		if dataType == "int" {
@@ -118,15 +106,12 @@ func main() {
 			sqlNullType := nullTypes[tf]
 			if sqlNullType != nil {
 				nullableVariable := fmt.Sprintf("%s := %s{}", jsonField, sqlNullType)
-				println("--->>>" + nullableVariable)
 				returnFields = append(returnFields, queryReturnField)
 				nullableVariableDeclartion = append(nullableVariableDeclartion, nullableVariable)
 				scanStatement = fmt.Sprintf("&%s ", f.Tag.Get("json"))
 				scanStatementArgs = append(scanStatementArgs, scanStatement)
 			}
 		} else {
-			//templateCode := fmt.Sprintf("%s := %s{}", f.Tag.Get("json"), tf)
-			//println(templateCode)
 			primType := primitiveTypes[tf]
 			if primType != nil {
 				returnFields = append(returnFields, queryReturnField)
@@ -134,16 +119,6 @@ func main() {
 				scanStatementArgs = append(scanStatementArgs, scanStatement)
 			}
 		}
-
-		// excluded fields for PUT,POST and GET
-		// required: required tag
-		// datatype categorization int, float64, string, boolean
-		// other primitive type should be read with sql.Null* datatype
-		// Any non primitive type should be handled manually in version 1
-		// jsonb should be handled manually
-		// scan
-		// Value assignment to struct
-
 	}
 
 	// Parse request body
@@ -151,17 +126,14 @@ func main() {
 	// Required and remove field for create
 	createRequiredStmt := fmt.Sprintf("createRequired := []string{\"%s\"}", strings.Join(createRequired, "\",\""))
 	createRemoveStmt := fmt.Sprintf("createRemove := []string{\"%s\"}", strings.Join(createRemove, "\",\""))
-
 	// Required and remove field for update
 	updateRequiredStmt := fmt.Sprintf("updateRequired := []string{\"%s\"}", strings.Join(updateRequired, "\",\""))
 	updateRemoveStmt := fmt.Sprintf("updateRemove := []string{\"%s\"}", strings.Join(updateRemove, "\",\""))
-
 	//CREATE remove & required
 	createRemoveAndRequiredStmts := fmt.Sprintf(REQUIRED_AND_REMOVE, "createRemove", "createRequired")
 	fmt.Println(createRequiredStmt)
 	fmt.Println(createRemoveStmt)
 	fmt.Println(createRemoveAndRequiredStmts)
-
 	//UPDATE remove & required
 	updateRemoveAndRequiredStmts := fmt.Sprintf(REQUIRED_AND_REMOVE, "updateRemove", "updateRequired")
 	fmt.Println(updateRequiredStmt)
@@ -171,16 +143,12 @@ func main() {
 	// Datatype statements
 	stringFieldStmt := fmt.Sprintf("stringField := []string{\"%s\"}", strings.Join(stringField, "\",\""))
 	fmt.Println(stringFieldStmt)
-
 	intFieldStmt := fmt.Sprintf("intField := []string{\"%s\"}", strings.Join(intField, "\",\""))
 	fmt.Println(intFieldStmt)
-
 	floatFieldStmt := fmt.Sprintf("floatField := []string{\"%s\"}", strings.Join(floatField, "\",\""))
 	fmt.Println(floatFieldStmt)
-
 	boolFieldStmt := fmt.Sprintf("boolField := []string{\"%s\"}", strings.Join(boolField, "\",\""))
 	fmt.Println(boolFieldStmt)
-
 	jsonFieldStmt := fmt.Sprintf("JSONField := []string{\"%s\"}", strings.Join(JSONField, "\",\""))
 	fmt.Println(jsonFieldStmt)
 
@@ -220,7 +188,6 @@ func main() {
 	fmt.Println(scanResult)
 	// After scan, commit
 	fmt.Println(AFTER_RESULT_SCAN)
-	fmt.Println("--->")
 }
 
 type Doctor struct {
@@ -283,15 +250,3 @@ if err != nil {
 return context.JSON(http.StatusOK, model)
 `
 )
-
-/*
-bool
-string
-int  int8  int16  int32  int64
-uint uint8 uint16 uint32 uint64 uintptr
-byte // alias for uint8
-rune // alias for int32
-     // represents a Unicode code point
-float32 float64
-complex64 complex128
-*/
