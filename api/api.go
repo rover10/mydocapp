@@ -4,6 +4,7 @@ import (
 	"path"
 
 	"github.com/labstack/echo/middleware"
+	"github.com/rover10/mydocapp.git/auth"
 	"github.com/rover10/mydocapp.git/server"
 )
 
@@ -11,6 +12,13 @@ func Api(server *server.Server) {
 	server.Router.Use(middleware.Logger())
 	server.Router.Use(middleware.Recover())
 	server.Router.Use(middleware.CORS())
+	// https://ednsquare.com/story/jwt-authentication-in-golang-with-echo------T2hTPm
+	h := &auth.Handler{}
+	server.Router.POST("/login", h.Login)
+	server.Router.GET("/is-loggedin", h.Private, auth.IsLoggedIn)
+	server.Router.GET("/is-admin", h.Private, auth.IsLoggedIn, auth.IsAdmin)
+	server.Router.POST("/refresh", h.Token)
+
 	server.Router.GET(path.Join(server.APIPath, "/v1/ping"), server.Ping)
 	server.Router.GET(path.Join(server.APIPath, "/v1/user/:uid"), server.RegisterUser)
 	server.Router.POST(path.Join(server.APIPath, "/v1/user"), server.RegisterUser)
