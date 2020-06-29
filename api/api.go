@@ -34,6 +34,8 @@ func Api(server *server.Server) {
 	server.Router.POST(path.Join(server.APIPath, "/v1/testreport"), server.AddTestReport, auth.IsLoggedIn)
 	server.Router.POST(path.Join(server.APIPath, "/v1/uploadqualification"), server.AddDoctorQualification)
 
+	server.Router.GET(path.Join(server.APIPath, "/v1/appointment"), server.Appointment, auth.IsLoggedIn)
+
 	server.Router.Renderer = server
 	server.Router.HideBanner = true
 	server.Router.HidePort = true

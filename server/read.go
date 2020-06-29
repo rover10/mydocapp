@@ -15,7 +15,8 @@ func Clinic(context echo.Context) error {
 }
 
 //Appointment read appointment
-func Appointment(context echo.Context) error {
+func (s *Server) Appointment(context echo.Context) error {
+	s.DB.RetrieveAppointment("sid")
 	return nil
 }
 

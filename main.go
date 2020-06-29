@@ -25,7 +25,7 @@ func main() {
 	config.DBPassword = "root"
 	config.DBUser = "postgres"
 	config.Host = "localhost"
-	config.Port = 3001
+	config.Port = 3000
 	config.WebDir = "web"
 	server := server.NewServer(config)
 	docdb := database.DocDB{}
