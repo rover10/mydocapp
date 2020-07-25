@@ -654,7 +654,7 @@ func (s *Server) AddDoctorQualification(context echo.Context) error {
 		log.Printf("\nError: %+v", err)
 	}
 
-	createRequired := []string{"userId", "qualificationId", "certificateDoc"}
+	createRequired := []string{"userId", "qualificationId", "certificateDoc", "university", "universityId"}
 	createRemove := []string{"verified"}
 	body = parseutil.RemoveFields(body, createRemove)
 	missing := parseutil.EnsureRequired(body, createRequired)
@@ -663,8 +663,17 @@ func (s *Server) AddDoctorQualification(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, missing)
 	}
 
-	stringField := []string{"userId", "createdOn", "certificateDoc"}
-	intField := []string{"qualificationId"}
+	// updateRequired := []string{""}
+	// updateRemove := []string{"uuid.UUID", "int", "string", "string", "bool"}
+	// body = parseutil.RemoveFields(body, updateRemove)
+	// missing := parseutil.EnsureRequired(body, updateRequired)
+	// if len(missing) != 0 {
+	// 	log.Println("missing", missing)
+	// 	return context.JSON(http.StatusBadRequest, missing)
+	// }
+
+	stringField := []string{"userId", "createdOn", "certificateDoc", "university"}
+	intField := []string{"qualificationId", "universityId"}
 	floatField := []string{""}
 	boolField := []string{"verified"}
 	JSONField := []string{""}
@@ -677,7 +686,7 @@ func (s *Server) AddDoctorQualification(context echo.Context) error {
 	}
 
 	query, values := querybuilder.BuildInsertQuery(body, "doctor_qualification")
-	query = query + "RETURNING user_id,qualification_id,created_on,certificate_doc,verified"
+	query = query + "RETURNING user_id,qualification_id,created_on,certificate_doc,verified,university,university_id"
 
 	tx, err := s.DB.DB.Begin()
 	if err != nil {
@@ -685,7 +694,7 @@ func (s *Server) AddDoctorQualification(context echo.Context) error {
 	}
 	row := tx.QueryRow(query, values...)
 
-	err = row.Scan(&model.UserID, &model.QualificationID, &model.CreatedOn, &model.CertificateDoc, &model.Verified)
+	err = row.Scan(&model.UserID, &model.QualificationID, &model.CreatedOn, &model.CertificateDoc, &model.Verified, &model.University, &model.UniversityID)
 
 	if err != nil {
 		log.Printf("\nDatabase Error: %+v", err)
