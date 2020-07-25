@@ -56,21 +56,26 @@ func (s *Server) RegisterUser(context echo.Context) error {
 	fmt.Println(values)
 	// Execute query
 	tx, err := s.DB.DB.Begin()
+	fmt.Println("-->1")
 	if err != nil {
+		fmt.Println(err)
 		return context.JSON(http.StatusInternalServerError, err)
 	}
+	fmt.Println("-->2")
 	row := tx.QueryRow(query, values...)
 	err = row.Scan(&user.UID, &user.FirstName, &user.Email, &user.Phone, &user.UserType, &user.Gender, &user.Country, &user.IsActive, &user.CreatedOn)
 	if err != nil {
 		log.Printf("\nDatabase Error: %+v", err)
 		return context.JSON(http.StatusInternalServerError, err)
 	}
+	fmt.Println("-->3")
 	err = tx.Commit()
 	if err != nil {
 		log.Printf("\nDatabase Commit Error: %+v", err)
 		tx.Rollback()
 		return context.JSON(http.StatusInternalServerError, err)
 	}
+	fmt.Println("-->4")
 	// Parse response into {model.User}: ParseRow(row, returnfields)
 	return context.JSON(http.StatusOK, user)
 }
@@ -672,8 +677,8 @@ func (s *Server) AddDoctorQualification(context echo.Context) error {
 	// 	return context.JSON(http.StatusBadRequest, missing)
 	// }
 
-	stringField := []string{"userId", "createdOn", "certificateDoc", "university"}
-	intField := []string{"qualificationId", "universityId"}
+	stringField := []string{"userId", "createdOn", "certificateDoc"}
+	intField := []string{"qualificationId"}
 	floatField := []string{""}
 	boolField := []string{"verified"}
 	JSONField := []string{""}
@@ -686,7 +691,7 @@ func (s *Server) AddDoctorQualification(context echo.Context) error {
 	}
 
 	query, values := querybuilder.BuildInsertQuery(body, "doctor_qualification")
-	query = query + "RETURNING user_id,qualification_id,created_on,certificate_doc,verified,university,university_id"
+	query = query + "RETURNING user_id,qualification_id,created_on,certificate_doc,verified"
 
 	tx, err := s.DB.DB.Begin()
 	if err != nil {
@@ -694,7 +699,7 @@ func (s *Server) AddDoctorQualification(context echo.Context) error {
 	}
 	row := tx.QueryRow(query, values...)
 
-	err = row.Scan(&model.UserID, &model.QualificationID, &model.CreatedOn, &model.CertificateDoc, &model.Verified, &model.University, &model.UniversityID)
+	err = row.Scan(&model.UserID, &model.QualificationID, &model.CreatedOn, &model.CertificateDoc, &model.Verified)
 
 	if err != nil {
 		log.Printf("\nDatabase Error: %+v", err)

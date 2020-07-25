@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
 	"github.com/rover10/mydocapp.git/api"
@@ -13,11 +14,13 @@ import (
 )
 
 func main() {
-	db, err := DBConnect()
+	dborm, dbGo, err := DBConnect()
+	defer dborm.Close()
+	defer dbGo.Close()
 	if err != nil {
 		log.Errorf("failed to connect database. Error :%+v", err)
 	}
-	fmt.Println(db)
+	fmt.Println(dborm)
 	config := config.Config{}
 	config.APIPath = "/"
 	config.DBHost = "localhost"
@@ -29,7 +32,8 @@ func main() {
 	config.WebDir = "web"
 	server := server.NewServer(config)
 	docdb := database.DocDB{}
-	docdb.DB = db
+	docdb.DBORM = dborm
+	docdb.DB = dbGo
 	server.DB = &docdb
 	api.Api(server)
 	err = server.Start()
@@ -39,22 +43,26 @@ func main() {
 
 }
 
-func DBConnect() (*sql.DB, error) {
+func DBConnect() (*gorm.DB, *sql.DB, error) {
 	dbinfo := "user=postgres port=5432 password=root dbname=docapp host=localhost sslmode=disable"
-	db, err := sql.Open("postgres", dbinfo)
+	db, err := gorm.Open("postgres", dbinfo)
+	//defer db.Close()
 	if err != nil {
 		log.Errorf("failed loading parameteres. Error :%+v", err)
-		return nil, err
+		return nil, nil, err
 	}
-	err = db.Ping()
+
+	db2, err := sql.Open("postgres", dbinfo)
+	//defer db2.Close()
+	err = db2.Ping()
 	if err != nil {
 		log.Errorf("failed to ping postgres Error :%+v", err)
-		return nil, err
+		return nil, nil, err
 	}
 
 	log.Info("Successfully connected")
 
-	return db, nil
+	return db, db2, nil
 }
 
 func execute(tx *sql.Tx, sqlStr string, vals []interface{}) error {
