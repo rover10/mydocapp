@@ -55,26 +55,38 @@ func (s *Server) RegisterUser(context echo.Context) error {
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
-	tx, err := s.DB.DB.Begin()
+	tx := s.DB.DBORM.Begin()
 	fmt.Println("-->1")
-	if err != nil {
-		fmt.Println(err)
+	if tx.Error != nil {
+		fmt.Println(tx.Error)
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 	fmt.Println("-->2")
-	row := tx.QueryRow(query, values...)
-	err = row.Scan(&user.UID, &user.FirstName, &user.Email, &user.Phone, &user.UserType, &user.Gender, &user.Country, &user.IsActive, &user.CreatedOn)
-	if err != nil {
-		log.Printf("\nDatabase Error: %+v", err)
+	row := tx.Raw(query, values...)
+	if tx.Error != nil {
+		fmt.Println(tx.Error)
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	row.Scan(&user)
+	// if err != nil {
+	// 	log.Printf("\nDatabase Error: %+v", err)
+	// 	return context.JSON(http.StatusInternalServerError, err)
+	// }
+	if tx.Error != nil {
+		fmt.Println(tx.Error)
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 	fmt.Println("-->3")
-	err = tx.Commit()
-	if err != nil {
-		log.Printf("\nDatabase Commit Error: %+v", err)
-		tx.Rollback()
-		return context.JSON(http.StatusInternalServerError, err)
+	tx.Commit()
+	if tx.Error != nil {
+		fmt.Println(tx.Error)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
+	// if err != nil {
+	// 	log.Printf("\nDatabase Commit Error: %+v", err)
+	// 	tx.Rollback()
+	// 	return context.JSON(http.StatusInternalServerError, err)
+	// }
 	fmt.Println("-->4")
 	// Parse response into {model.User}: ParseRow(row, returnfields)
 	return context.JSON(http.StatusOK, user)
@@ -127,27 +139,35 @@ func (s *Server) RegisterPatient(context echo.Context) error {
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
-	tx, err := s.DB.DB.Begin()
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err)
-	}
-	row := tx.QueryRow(query, values...)
-	lastName := sql.NullString{}
-
-	err = row.Scan(&patient.UID, &patient.AccountID, &patient.FirstName, &lastName, &patient.Age, &patient.Email, &patient.Phone, &patient.GenderID, &patient.CountryID, &patient.CreatedOn)
-	if err != nil {
+	tx := s.DB.DBORM.Begin()
+	if tx.Error != nil {
 		log.Printf("\nDatabase Error: %+v", err)
-		return context.JSON(http.StatusInternalServerError, err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	err = tx.Commit()
-	if err != nil {
-		log.Printf("\nDatabase Commit Error: %+v", err)
-		tx.Rollback()
-		return context.JSON(http.StatusInternalServerError, err)
+	// if err != nil {
+	// 	return context.JSON(http.StatusInternalServerError, err)
+	// }
+	row := tx.Raw(query, values...)
+	//lastName := sql.NullString{}
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	if lastName.Valid {
-		patient.LastName = lastName.String
+
+	row.Scan(&patient)
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
+	tx.Commit()
+	// if err != nil {
+	// 	log.Printf("\nDatabase Commit Error: %+v", err)
+	// 	tx.Rollback()
+	// 	return context.JSON(http.StatusInternalServerError, err)
+	// }
+	// if lastName.Valid {
+	// 	patient.LastName = lastName.String
+	// }
 	// Parse response into {model.User}: ParseRow(row, returnfields)
 	return context.JSON(http.StatusOK, patient)
 }
@@ -186,30 +206,35 @@ func (s *Server) RegisterDoctor(context echo.Context) error {
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
-	tx, err := s.DB.DB.Begin()
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err)
-	}
-	row := tx.QueryRow(query, values...)
-	fee := sql.NullFloat64{}
-	practiceStartDate := sql.NullString{}
-	err = row.Scan(&doctor.AccountID, &fee, &practiceStartDate)
-	if err != nil {
+	tx := s.DB.DBORM.Begin()
+	if tx.Error != nil {
 		log.Printf("\nDatabase Error: %+v", err)
-		return context.JSON(http.StatusInternalServerError, err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	err = tx.Commit()
-	if err != nil {
-		log.Printf("\nDatabase Commit Error: %+v", err)
-		tx.Rollback()
-		return context.JSON(http.StatusInternalServerError, err)
+	row := tx.Raw(query, values...)
+	//fee := sql.NullFloat64{}
+	//practiceStartDate := sql.NullString{}
+	row.Scan(&doctor)
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	if fee.Valid {
-		doctor.Fee = &fee.Float64
+	tx.Commit()
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	if practiceStartDate.Valid {
-		doctor.PracticeStartDate = &practiceStartDate.String
-	}
+	// if err != nil {
+	// 	log.Printf("\nDatabase Commit Error: %+v", err)
+	// 	tx.Rollback()
+	// 	return context.JSON(http.StatusInternalServerError, err)
+	// }
+	// if fee.Valid {
+	// 	doctor.Fee = &fee.Float64
+	// }
+	// if practiceStartDate.Valid {
+	// 	doctor.PracticeStartDate = &practiceStartDate.String
+	// }
 
 	// Parse response into {model.User}: ParseRow(row, returnfields)
 	return context.JSON(http.StatusOK, doctor)
@@ -249,22 +274,22 @@ func (s *Server) RegisterClinic(context echo.Context) error {
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
-	tx, err := s.DB.DB.Begin()
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err)
-	}
-	row := tx.QueryRow(query, values...)
-
-	err = row.Scan(&clinic.UID, &clinic.AccountID, &clinic.Name, &clinic.Address, &clinic.StateID, &clinic.CountryID, &clinic.Phone, &clinic.Email, &clinic.CreatedOn)
-	if err != nil {
+	tx := s.DB.DBORM.Begin()
+	if tx.Error != nil {
 		log.Printf("\nDatabase Error: %+v", err)
-		return context.JSON(http.StatusInternalServerError, err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	err = tx.Commit()
-	if err != nil {
-		log.Printf("\nDatabase Commit Error: %+v", err)
-		tx.Rollback()
-		return context.JSON(http.StatusInternalServerError, err)
+	row := tx.Raw(query, values...)
+
+	row.Scan(&clinic)
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
+	}
+	tx.Commit()
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
 
 	// Parse response into {model.User}: ParseRow(row, returnfields)
@@ -304,22 +329,22 @@ func (s *Server) RegisterStaff(context echo.Context) error {
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
-	tx, err := s.DB.DB.Begin()
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err)
-	}
-	row := tx.QueryRow(query, values...)
-
-	err = row.Scan(&staff.AccountID, &staff.ClinicID, &staff.CreatedOn, &staff.IsActive)
-	if err != nil {
+	tx := s.DB.DBORM.Begin()
+	if tx.Error != nil {
 		log.Printf("\nDatabase Error: %+v", err)
-		return context.JSON(http.StatusInternalServerError, err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	err = tx.Commit()
-	if err != nil {
-		log.Printf("\nDatabase Commit Error: %+v", err)
-		tx.Rollback()
-		return context.JSON(http.StatusInternalServerError, err)
+	row := tx.Raw(query, values...)
+
+	row.Scan(&staff)
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
+	}
+	tx.Commit()
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
 
 	// Parse response into {model.User}: ParseRow(row, returnfields)
@@ -363,28 +388,24 @@ func (s *Server) BookAppointment(context echo.Context) error {
 	fmt.Println(query)
 	fmt.Println(values)
 	// Execute query
-	tx, err := s.DB.DB.Begin()
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err)
-	}
-	row := tx.QueryRow(query, values...)
-	diseaseID := sql.NullInt64{}
-	err = row.Scan(&appointment.UID, &appointment.AccountID, &appointment.ClinicID, &appointment.PatientID, &diseaseID, &appointment.SlotDateTime, &appointment.ContactPhone, &appointment.NoShow, &appointment.CreatedOn)
-	if err != nil {
+	tx := s.DB.DBORM.Begin()
+	if tx.Error != nil {
 		log.Printf("\nDatabase Error: %+v", err)
-		return context.JSON(http.StatusInternalServerError, err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	err = tx.Commit()
-	if err != nil {
-		log.Printf("\nDatabase Commit Error: %+v", err)
-		tx.Rollback()
-		return context.JSON(http.StatusInternalServerError, err)
+	row := tx.Raw(query, values...)
+	//diseaseID := sql.NullInt64{}
+	row.Scan(&appointment)
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	if diseaseID.Valid {
-		dval := diseaseID.Int64
-		intdVal := int(dval)
-		appointment.DiseaseID = &intdVal
+	tx.Commit()
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
+
 	// Parse response into {model.User}: ParseRow(row, returnfields)
 	return context.JSON(http.StatusOK, appointment)
 
@@ -422,22 +443,23 @@ func (s *Server) RegisterTreatment(context echo.Context) error {
 	query, values := querybuilder.BuildInsertQuery(body, "treatment")
 	query = query + "RETURNING uid,appointment_id,doctor_id,patient_problem_description,created_on"
 
-	tx, err := s.DB.DB.Begin()
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err)
-	}
-	row := tx.QueryRow(query, values...)
-
-	err = row.Scan(&model.UID, &model.AppointmentID, &model.DoctorID, &model.PatientProblemDesc, &model.CreatedOn)
-
-	if err != nil {
+	tx := s.DB.DBORM.Begin()
+	if tx.Error != nil {
 		log.Printf("\nDatabase Error: %+v", err)
-		return context.JSON(http.StatusInternalServerError, err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	err = tx.Commit()
-	if err != nil {
-		log.Printf("\nDatabase Commit Error: %+v", err)
-		return context.JSON(http.StatusInternalServerError, err)
+	row := tx.Raw(query, values...)
+
+	row.Scan(&model)
+
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
+	}
+	tx.Commit()
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
 	return context.JSON(http.StatusOK, model)
 }
@@ -474,22 +496,23 @@ func (s *Server) RegisterDoctorReview(context echo.Context) error {
 	query, values := querybuilder.BuildInsertQuery(body, "doctor_review")
 	query = query + "RETURNING appointment_id,reviewer_id,doctor_id,rating,review,created_on"
 
-	tx, err := s.DB.DB.Begin()
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err)
-	}
-	row := tx.QueryRow(query, values...)
-
-	err = row.Scan(&model.AppointmentID, &model.ReviewerID, &model.DoctorID, &model.Rating, &model.Review, &model.CreatedOn)
-
-	if err != nil {
+	tx := s.DB.DBORM.Begin()
+	if tx.Error != nil {
 		log.Printf("\nDatabase Error: %+v", err)
-		return context.JSON(http.StatusInternalServerError, err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	err = tx.Commit()
-	if err != nil {
-		log.Printf("\nDatabase Commit Error: %+v", err)
-		return context.JSON(http.StatusInternalServerError, err)
+	row := tx.Raw(query, values...)
+
+	row.Scan(&model)
+
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
+	}
+	tx.Commit()
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
 	return context.JSON(http.StatusOK, model)
 }
@@ -526,22 +549,23 @@ func (s *Server) UploadUserDocument(context echo.Context) error {
 	query, values := querybuilder.BuildInsertQuery(body, "user_document")
 	query = query + "RETURNING uid,user_id,doc_type_id,url,created_on"
 
-	tx, err := s.DB.DB.Begin()
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err)
-	}
-	row := tx.QueryRow(query, values...)
-
-	err = row.Scan(&model.UID, &model.UserID, &model.DocumentTypeID, &model.URL, &model.CreatedOn)
-
-	if err != nil {
+	tx := s.DB.DBORM.Begin()
+	if tx.Error != nil {
 		log.Printf("\nDatabase Error: %+v", err)
-		return context.JSON(http.StatusInternalServerError, err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	err = tx.Commit()
-	if err != nil {
-		log.Printf("\nDatabase Commit Error: %+v", err)
-		return context.JSON(http.StatusInternalServerError, err)
+	row := tx.Raw(query, values...)
+
+	row.Scan(&model)
+
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
+	}
+	tx.Commit()
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
 	return context.JSON(http.StatusOK, model)
 }
@@ -579,21 +603,22 @@ func (s *Server) AddTestReport(context echo.Context) error {
 	query, values := querybuilder.BuildInsertQuery(body, "test_report")
 	query = query + "RETURNING uid,treatment_id,doc_id,created_on,updated_on"
 
-	tx, err := s.DB.DB.Begin()
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err)
-	}
-	row := tx.QueryRow(query, values...)
-
-	updatedOn := sql.NullString{}
-	err = row.Scan(&model.UID, &model.TreatmentID, &model.DocumentID, &model.CreatedOn, &updatedOn)
-
-	if err != nil {
+	tx := s.DB.DBORM.Begin()
+	if tx.Error != nil {
 		log.Printf("\nDatabase Error: %+v", err)
-		return context.JSON(http.StatusInternalServerError, err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
 	}
-	err = tx.Commit()
-	if err != nil {
+	row := tx.Raw(query, values...)
+
+	//updatedOn := sql.NullString{}
+	row.Scan(&model)
+
+	if tx.Error != nil {
+		log.Printf("\nDatabase Error: %+v", err)
+		return context.JSON(http.StatusInternalServerError, tx.Error)
+	}
+	tx.Commit()
+	if tx.Error != nil {
 		log.Printf("\nDatabase Commit Error: %+v", err)
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -632,20 +657,20 @@ func (s *Server) AssignStaffRole(context echo.Context) error {
 	query, values := querybuilder.BuildInsertQuery(body, "staff_role")
 	query = query + "RETURNING user_id,role_id,clinic_id,created_on,is_active"
 
-	tx, err := s.DB.DB.Begin()
+	tx := s.DB.DBORM.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
-	row := tx.QueryRow(query, values...)
+	row := tx.Raw(query, values...)
 
-	err = row.Scan(&model.UserID, &model.RoleID, &model.ClinicID, &model.CreatedOn, &model.IsActive)
+	row.Scan(&model)
 
-	if err != nil {
+	if tx.Error != nil {
 		log.Printf("\nDatabase Error: %+v", err)
 		return context.JSON(http.StatusInternalServerError, err)
 	}
-	err = tx.Commit()
-	if err != nil {
+	tx.Commit()
+	if tx.Error != nil {
 		log.Printf("\nDatabase Commit Error: %+v", err)
 		return context.JSON(http.StatusInternalServerError, err)
 	}
@@ -693,20 +718,20 @@ func (s *Server) AddDoctorQualification(context echo.Context) error {
 	query, values := querybuilder.BuildInsertQuery(body, "doctor_qualification")
 	query = query + "RETURNING user_id,qualification_id,created_on,certificate_doc,verified"
 
-	tx, err := s.DB.DB.Begin()
+	tx := s.DB.DBORM.Begin()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
-	row := tx.QueryRow(query, values...)
+	row := tx.Raw(query, values...)
 
-	err = row.Scan(&model.UserID, &model.QualificationID, &model.CreatedOn, &model.CertificateDoc, &model.Verified)
+	row.Scan(&model)
 
 	if err != nil {
 		log.Printf("\nDatabase Error: %+v", err)
 		return context.JSON(http.StatusInternalServerError, err)
 	}
-	err = tx.Commit()
-	if err != nil {
+	tx.Commit()
+	if tx.Error != nil {
 		log.Printf("\nDatabase Commit Error: %+v", err)
 		return context.JSON(http.StatusInternalServerError, err)
 	}

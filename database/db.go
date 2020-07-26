@@ -1,7 +1,6 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 
 	"github.com/jinzhu/gorm"
@@ -10,7 +9,7 @@ import (
 
 type DocDB struct {
 	DBORM *gorm.DB
-	DB    *sql.DB
+	//DB    *sql.DB
 }
 
 func (db *DocDB) RetriveUserCred(email string) (model.User, error) {

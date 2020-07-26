@@ -14,9 +14,9 @@ import (
 )
 
 func main() {
-	dborm, dbGo, err := DBConnect()
+	dborm, err := DBConnect()
 	defer dborm.Close()
-	defer dbGo.Close()
+	//defer dbGo.Close()
 	if err != nil {
 		log.Errorf("failed to connect database. Error :%+v", err)
 	}
@@ -33,7 +33,7 @@ func main() {
 	server := server.NewServer(config)
 	docdb := database.DocDB{}
 	docdb.DBORM = dborm
-	docdb.DB = dbGo
+	//docdb.DB = dbGo
 	server.DB = &docdb
 	api.Api(server)
 	err = server.Start()
@@ -43,26 +43,26 @@ func main() {
 
 }
 
-func DBConnect() (*gorm.DB, *sql.DB, error) {
+func DBConnect() (*gorm.DB, error) {
 	dbinfo := "user=postgres port=5432 password=root dbname=docapp host=localhost sslmode=disable"
 	db, err := gorm.Open("postgres", dbinfo)
 	//defer db.Close()
 	if err != nil {
 		log.Errorf("failed loading parameteres. Error :%+v", err)
-		return nil, nil, err
+		return nil, err
 	}
 
-	db2, err := sql.Open("postgres", dbinfo)
-	//defer db2.Close()
-	err = db2.Ping()
-	if err != nil {
-		log.Errorf("failed to ping postgres Error :%+v", err)
-		return nil, nil, err
-	}
+	// db2, err := sql.Open("postgres", dbinfo)
+	// //defer db2.Close()
+	// err = db2.Ping()
+	// if err != nil {
+	// 	log.Errorf("failed to ping postgres Error :%+v", err)
+	// 	return nil, nil, err
+	// }
 
 	log.Info("Successfully connected")
 
-	return db, db2, nil
+	return db, nil
 }
 
 func execute(tx *sql.Tx, sqlStr string, vals []interface{}) error {
