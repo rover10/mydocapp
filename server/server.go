@@ -52,6 +52,12 @@ func (s *Server) Render(w io.Writer, name string, data interface{}, c echo.Conte
 	return s.Templates.ExecuteTemplate(w, name, data)
 }
 
+func (s *Server) Home(context echo.Context) error {
+	return context.Render(http.StatusOK, "index.html", struct{ PublicPath string }{
+		path.Join("..", "public"),
+	})
+}
+
 func Templates(webDir string) *template.Template {
 	templatePath := path.Join(webDir, "templates", "*.html")
 	return template.Must(template.New("").Delims("[[", "]]").ParseGlob(templatePath))

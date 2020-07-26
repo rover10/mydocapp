@@ -23,5 +23,6 @@ type Appointment struct {
 	NoShow bool `json:"noShow"`
 	//no_show boolean default false not null,
 	CreatedOn string `json:"createdOn"`
-	UpdatedOn string `json:"updatedOn"`
+	UpdatedOn string `json:"-"`
+	Cancelled bool   `json:"cancelled"`
 }

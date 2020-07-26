@@ -35,7 +35,10 @@ func Api(server *server.Server) {
 	server.Router.POST(path.Join(server.APIPath, "/v1/uploadqualification"), server.AddDoctorQualification)
 
 	server.Router.GET(path.Join(server.APIPath, "/v1/appointment"), server.Appointment, auth.IsLoggedIn)
-
+	server.Router.File("/", "app/index.html")
+	server.Router.Static("/static", "assets")
+	server.Router.GET(path.Join(server.APIPath, "home"), server.Home)
+	//server.Router.File("/home", "public/index.html")
 	server.Router.Renderer = server
 	server.Router.HideBanner = true
 	server.Router.HidePort = true
