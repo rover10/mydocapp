@@ -36,7 +36,8 @@ func Api(server *server.Server) {
 
 	server.Router.GET(path.Join(server.APIPath, "/v1/appointment"), server.Appointment, auth.IsLoggedIn)
 	server.Router.File("/", "app/index.html")
-	server.Router.Static("/static", "assets")
+	server.Router.Static("static/*", "web/assets")
+	//e.Static("/", "assets")
 	server.Router.GET(path.Join(server.APIPath, "home"), server.Home)
 	//server.Router.File("/home", "public/index.html")
 	server.Router.Renderer = server
