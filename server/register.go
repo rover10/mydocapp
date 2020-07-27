@@ -13,6 +13,7 @@ import (
 	"github.com/rover10/mydocapp.git/model"
 	"github.com/rover10/mydocapp.git/parseutil"
 	"github.com/rover10/mydocapp.git/querybuilder"
+	"github.com/rover10/mydocapp.git/token"
 )
 
 // Ping - This function will ping the echo server
@@ -362,6 +363,9 @@ func (s *Server) BookAppointment(context echo.Context) error {
 	required := []string{"accountId", "clinicId", "patientId", "slotDateTime", "contactPhone"}
 	remove := []string{"uid", "createdOn", "noShow"}
 	body = parseutil.RemoveFields(body, remove)
+	login := token.GetLoggedIn(context)
+	accountID := login["uid"].(string)
+	body["accountId"] = accountID
 	missing := parseutil.EnsureRequired(body, required)
 	if len(missing) != 0 {
 		log.Println("missing", missing)

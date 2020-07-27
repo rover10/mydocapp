@@ -28,8 +28,6 @@
         </div>
         <div class="col-4"></div>
     </div>
-   
-
 
     <div ng-show = "loginForm">   
         First Name: <input type="text" ng-model="userName"><br>
@@ -41,6 +39,9 @@
     <button type="button" ng-click="appointments();">Appointments</button>
     <a href="#" ng-click="logout();">Sign out</a>
     <a href="#" ng-click="newRegisterForm(true)" ng-show="registerlink"> Register</a>
+    
+    <a href="#" ng-click="showBookAppointment()"> New Appointment</a>
+
 
     <div class="New user" ng-show="newuser.showForm ">
     <form>
@@ -113,6 +114,39 @@
 
 
 
+<div class="New user" ng-show="newappointment.showForm">
+    <form>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="newappointment.clinicId">Clinic</label>
+                <input type="text" id="newappointment.clinicId" class="form-control" ng-model = "newappointment.clinicId" placeholder="Clinic ">
+              </div>
+
+              <div class="form-group col-md-12">
+                <label for="newappointment.patientId">Patient</label>
+                <input  id="newappointment.patientId" class="form-control" ng-model = "newappointment.patientId" type = "text" placeholder="Patient">
+              </div> 
+
+            <div class="form-group col-md-12">
+                <label for="newappointment.slotDateTime">Appointment date</label>
+                <input id="newappointment.slotDateTime" class="form-control" ng-model = "newappointment.slotDateTime"  value="2011-08-19T13:45:00" type="datetime-local" placeholder="Slot datetime">
+               
+                <label for="example-datetime-local-input" class="col-2 col-form-label">Date and time</label>
+              </div>
+              <div class="form-group col-md-12">
+                <label for="newappointment.contactPhone">Contact phone</label>
+                <input id="newappointment.contactPhone" class="form-control" ng-model = "newappointment.contactPhone" type = "text" placeholder="Age">
+              </div> 
+
+            <div class="form-group col-md-6">
+                <label for="newappointment.diseaseId">Disease</label>
+                <input id="newappointment.diseaseId" class="form-control" ng-model = "newappointment.diseaseId" type = "text" placeholder="Disease">
+              </div>
+        </div>
+
+        <Button class="btn btn-primary" ng-model="newusersubmit" ng-click="bookAppointment();">Book</Button>
+    </form>
+</div>
 
 
 
@@ -274,6 +308,49 @@ app.controller('personCtrl', function($scope, $http) {
             
             $scope.login();
             $scope.newRegisterForm(false);
+        }, 
+        function(response) { // optional
+                // failed
+                console.log("Failed")
+        });;
+    }
+
+    $scope.showBookAppointment = function(){
+        $scope.newappointment.showForm = true;
+    }
+
+    $scope.newappointment = {}
+    $scope.newappointment.accountId = ""
+    $scope.newappointment.clinicId = ""
+    $scope.newappointment.patientId = ""
+    $scope.newappointment.slotDateTime = ""
+    $scope.newappointment.contactPhone = ""
+    $scope.newappointment.diseaseId = 1
+    $scope.newappointment.showForm = false;
+
+    $scope.bookAppointment = function () {
+       // console.log(config)
+        var data = {
+            "accountId": $scope.newappointment.accountId,
+            "clinicId": $scope.newappointment.clinicId,
+            "patientId": $scope.newappointment.patientId,
+            "slotDateTime": $scope.newappointment.slotDateTime,
+            "contactPhone": $scope.newappointment.contactPhone,
+            "diseaseId": $scope.newappointment.diseaseId * 1
+        }
+
+        $http({
+            url: "/v1/appointment", 
+            method: "POST",
+            data: data,
+            headers:  {
+                'Authorization': 'Bearer ' + $scope.loginToken,
+                'Content-Type': 'application/json'
+                }
+            }).then(function(response) {
+            //Login
+            $scope.myappointments = $scope.myappointments.concat(response.data);
+                response.data
         }, 
         function(response) { // optional
                 // failed
