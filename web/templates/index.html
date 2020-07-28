@@ -29,17 +29,31 @@
         <div class="col-4"></div>
     </div>
 
-    <div ng-show = "loginForm">   
-        First Name: <input type="text" ng-model="userName"><br>
-        Last Name: <input type="password" ng-model="password"><br>
-        <button type="button" ng-click="login();" >Login</button>
-        <br>
+    <BR><BR><BR>
+
+    <div ng-show = "loginForm">  
+        <div class="form-col">
+        <div class="form-group row-md-4">
+        <label for="userName">Email</label> 
+        <input class="form-control"  type="text" ng-model="userName"><br>
+        </div>
+
+        <div class="form-group row-md-4">
+        <label for="password">Password</label> 
+       <input class="form-control"  type="password" ng-model="password"><br>
+        </div>
+  
+        <div class="form-group row-md-4">
+            <label for="login"></label> 
+            <button class="btn btn-primary" type="button" ng-click="login();" >Login</button>
+        </div>
+        </div>
     </div>
     
+    <BR><BR><BR>
     <button type="button" ng-click="appointments();">Appointments</button>
     <a href="#" ng-click="logout();">Sign out</a>
     <a href="#" ng-click="newRegisterForm(true)" ng-show="registerlink"> Register</a>
-    
     <a href="#" ng-click="showBookAppointment()"> New Appointment</a>
 
 
