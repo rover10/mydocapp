@@ -33,133 +33,178 @@
 
     <div ng-show = "loginForm">  
         <div class="form-col">
-        <div class="form-group row-md-4">
-        <label for="userName">Email</label> 
-        <input class="form-control"  type="text" ng-model="userName"><br>
-        </div>
-
-        <div class="form-group row-md-4">
-        <label for="password">Password</label> 
-       <input class="form-control"  type="password" ng-model="password"><br>
-        </div>
-  
-        <div class="form-group row-md-4">
-            <label for="login"></label> 
-            <button class="btn btn-primary" type="button" ng-click="login();" >Login</button>
-        </div>
+            <div class="form-group row-md-4">
+            <label for="userName">Email</label> 
+            <input class="form-control"  type="text" ng-model="userName"><br>
+            </div>
+            <div class="form-group row-md-4">
+            <label for="password">Password</label> 
+            <input class="form-control"  type="password" ng-model="password"><br>
+            </div>
+            <div class="form-group row-md-4">
+                <label for="login"></label> 
+                <button class="btn btn-primary" type="button" ng-click="login();" >Login</button>
+                <a href="#" ng-click="newRegisterForm(true)" ng-show="registerlink"  data-toggle="modal" data-target="#registerNewUser" data-whatever="@getbootstrap"> Register</a>
+            </div>
         </div>
     </div>
     
     <BR><BR><BR>
-    <button type="button" ng-click="appointments();">Appointments</button>
-    <a href="#" ng-click="logout();">Sign out</a>
-    <a href="#" ng-click="newRegisterForm(true)" ng-show="registerlink"> Register</a>
-    <a href="#" ng-click="showBookAppointment()"> New Appointment</a>
+        
+    <div ng-show="!loginForm">   
+        <button type="button" ng-click="appointments();">Appointments</button>
+        <a href="#" ng-click="showBookAppointment()" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap"> New Appointment</a>
+        
+        <a href="#" ng-click="logout();">Sign out</a>
+    </div> 
 
+<!---->
+    <div class="modal fade" id="registerNewUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Register new user</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="newuser.firstName">First name</label>
+                            <input type="text" id="newuser.firstName" class="form-control" ng-model = "newuser.firstName" placeholder="First name">
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="newuser.lastName">Last name</label>
+                            <input  id="newuser.lastName" class="form-control" ng-model = "newuser.lastName" type = "text" placeholder="Last name">
+                          </div> 
+                    </div>
+                   
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="newuser.userType">User type</label>
+                            <input id="newuser.userType" class="form-control" ng-model = "newuser.userType" type = "text" placeholder="User type">
+                           
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="newuser.age">Age</label>
+                            <input id="newuser.age" class="form-control" ng-model = "newuser.age" type = "text" placeholder="Age">
+                          </div> 
+                    </div>
+            
+                    
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="newuser.gender">Gender</label>
+                            <input id="newuser.gender" class="form-control" ng-model = "newuser.gender" type = "text" placeholder="Gender">
+                           
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="newuser.email">Email</label>
+                            <input id="newuser.email" class="form-control" ng-model = "newuser.email" type = "email" placeholder="Email">
+                          </div> 
+                    </div>
+            
+                    
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="newuser.phone">Phone</label>
+                            <input id="newuser.phone" class="form-control" ng-model = "newuser.phone" type = "text" placeholder="Phone">
+                            
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="newuser.country">Country</label>
+                            <input id="newuser.country" class="form-control" ng-model = "newuser.country" type = "text" placeholder="Country">
+                          </div> 
+                    </div>
+            
+                    
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="newuser.password">Password</label>
+                            <input  class="form-control" id="newuser.password" ng-model = "newuser.password" type="password" placeholder="Password">
+            
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="newuser.retypedPassword">Retype password</label>
+                            <input  class="form-control" id="newuser.retypedPassword" ng-model = "newuser.retypedPassword" type="password" placeholder="Retype password">
+                          </div> 
+                    </div>
+                    
+          
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <Button class="btn btn-primary" ng-model = "newusersubmit" ng-click="register();">Register</Button>
+        </div>
+        </div>
+    </div>
+    </div>
 
+<!---->
     <div class="New user" ng-show="newuser.showForm ">
-    <form>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="newuser.firstName">First name</label>
-                <input type="text" id="newuser.firstName" class="form-control" ng-model = "newuser.firstName" placeholder="First name">
-              </div>
-              <div class="form-group col-md-6">
-                <label for="newuser.lastName">Last name</label>
-                <input  id="newuser.lastName" class="form-control" ng-model = "newuser.lastName" type = "text" placeholder="Last name">
-              </div> 
-        </div>
-       
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="newuser.userType">User type</label>
-                <input id="newuser.userType" class="form-control" ng-model = "newuser.userType" type = "text" placeholder="User type">
-               
-              </div>
-              <div class="form-group col-md-6">
-                <label for="newuser.age">Age</label>
-                <input id="newuser.age" class="form-control" ng-model = "newuser.age" type = "text" placeholder="Age">
-              </div> 
-        </div>
-
-        
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="newuser.gender">Gender</label>
-                <input id="newuser.gender" class="form-control" ng-model = "newuser.gender" type = "text" placeholder="Gender">
-               
-              </div>
-              <div class="form-group col-md-6">
-                <label for="newuser.email">Email</label>
-                <input id="newuser.email" class="form-control" ng-model = "newuser.email" type = "email" placeholder="Email">
-              </div> 
-        </div>
-
-        
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="newuser.phone">Phone</label>
-                <input id="newuser.phone" class="form-control" ng-model = "newuser.phone" type = "text" placeholder="Phone">
-                
-              </div>
-              <div class="form-group col-md-6">
-                <label for="newuser.country">Country</label>
-                <input id="newuser.country" class="form-control" ng-model = "newuser.country" type = "text" placeholder="Country">
-              </div> 
-        </div>
-
-        
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="newuser.password">Password</label>
-                <input  class="form-control" id="newuser.password" ng-model = "newuser.password" type="password" placeholder="Password">
-
-              </div>
-              <div class="form-group col-md-6">
-                <label for="newuser.retypedPassword">Retype password</label>
-                <input  class="form-control" id="newuser.retypedPassword" ng-model = "newuser.retypedPassword" type="password" placeholder="Retype password">
-              </div> 
-        </div>
-        <Button class="btn btn-primary" ng-model = "newusersubmit" ng-click="register();">Register</Button>
-    </form>
-</div>
+    
+    </div>
 {{newuser.firstName}}
 
 
 
+<!---->
+    <div class="modal fade" id="newappointmentModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">New appointment</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="newappointment.clinicId">Clinic</label>
+                            <input type="text" id="newappointment.clinicId" class="form-control" ng-model = "newappointment.clinicId" placeholder="Clinic ">
+                          </div>
+            
+                          <div class="form-group col-md-12">
+                            <label for="newappointment.patientId">Patient</label>
+                            <input  id="newappointment.patientId" class="form-control" ng-model = "newappointment.patientId" type = "text" placeholder="Patient">
+                          </div> 
+            
+                        <div class="form-group col-md-12">
+                            <label for="newappointment.slotDateTime">Appointment date</label>
+                            <input id="newappointment.slotDateTime" class="form-control" ng-model = "newappointment.slotDateTime"  value="2011-08-19T13:45:00" type="datetime-local" placeholder="Slot datetime">
+                           
+                            <label for="example-datetime-local-input" class="col-2 col-form-label">Date and time</label>
+                          </div>
+                          <div class="form-group col-md-12">
+                            <label for="newappointment.contactPhone">Contact phone</label>
+                            <input id="newappointment.contactPhone" class="form-control" ng-model = "newappointment.contactPhone" type = "text" placeholder="Age">
+                          </div> 
+            
+                        <div class="form-group col-md-6">
+                            <label for="newappointment.diseaseId">Disease</label>
+                            <input id="newappointment.diseaseId" class="form-control" ng-model = "newappointment.diseaseId" type = "text" placeholder="Disease">
+                          </div>
+                    </div>
+            
+                   
+                </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <Button class="btn btn-primary" ng-model="newusersubmit" ng-click="bookAppointment();">Book</Button>
+        </div>
+        </div>
+    </div>
+    </div>
+<!---->
 
 <div class="New user" ng-show="newappointment.showForm">
-    <form>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <label for="newappointment.clinicId">Clinic</label>
-                <input type="text" id="newappointment.clinicId" class="form-control" ng-model = "newappointment.clinicId" placeholder="Clinic ">
-              </div>
-
-              <div class="form-group col-md-12">
-                <label for="newappointment.patientId">Patient</label>
-                <input  id="newappointment.patientId" class="form-control" ng-model = "newappointment.patientId" type = "text" placeholder="Patient">
-              </div> 
-
-            <div class="form-group col-md-12">
-                <label for="newappointment.slotDateTime">Appointment date</label>
-                <input id="newappointment.slotDateTime" class="form-control" ng-model = "newappointment.slotDateTime"  value="2011-08-19T13:45:00" type="datetime-local" placeholder="Slot datetime">
-               
-                <label for="example-datetime-local-input" class="col-2 col-form-label">Date and time</label>
-              </div>
-              <div class="form-group col-md-12">
-                <label for="newappointment.contactPhone">Contact phone</label>
-                <input id="newappointment.contactPhone" class="form-control" ng-model = "newappointment.contactPhone" type = "text" placeholder="Age">
-              </div> 
-
-            <div class="form-group col-md-6">
-                <label for="newappointment.diseaseId">Disease</label>
-                <input id="newappointment.diseaseId" class="form-control" ng-model = "newappointment.diseaseId" type = "text" placeholder="Disease">
-              </div>
-        </div>
-
-        <Button class="btn btn-primary" ng-model="newusersubmit" ng-click="bookAppointment();">Book</Button>
-    </form>
+    
 </div>
 
 
@@ -297,14 +342,14 @@ app.controller('personCtrl', function($scope, $http) {
        // console.log(config)
         
         var data = {
-            "userType": $scope.newuser.userType,
+            "userType": $scope.newuser.userType *1,
             "firstName": $scope.newuser.firstName,
             "lastName": $scope.newuser.lastName,
-            "genderId": $scope.newuser.genderId,
-            "age": $scope.newuser.age,
+            "genderId": $scope.newuser.genderId *1,
+            "age": $scope.newuser.age *1,
             "phone": $scope.newuser.phone,
             "email": $scope.newuser.email,
-            "countryId": $scope.newuser.countryId,
+            "countryId": $scope.newuser.countryId *1,
             "password": $scope.newuser.password,
             "retypedPassword": $scope.newuser.retypedPassword
         }
