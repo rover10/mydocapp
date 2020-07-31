@@ -15,40 +15,57 @@
     .login {
             color:grey
         }
+
+    .loginForm{
+        background: red; 
+        border-style: solid;
+        padding: 20px;
+        border-radius: 10px;
+        border-width: thin;
+        border-collapse: green;
+        padding: 60px;
+        border-color: #e5f1e5;
+        border-color: #bdbdbd;
+        box-shadow: 1px 2px 3px silver;
+        background-color: white;
+    }
 </style>
 
 <body>
 
 <div ng-app="myApp" ng-controller="personCtrl">
-<div class="container align-self-center">
-    <div class="row">
-        <div class="col-4"></div>
-        <div class="col-4">
-            <img src="/static/logo.png" width="200px">
-        </div>
-        <div class="col-4"></div>
+<div >
+    <div class="row" class=" align-self-center" >
+       
+           
+    
     </div>
 
     <BR><BR><BR>
 
-    <div ng-show = "loginForm">  
-        <div class="form-col">
-            <div class="form-group row-md-4">
-            <label for="userName">Email</label> 
-            <input class="form-control"  type="text" ng-model="userName"><br>
-            </div>
-            <div class="form-group row-md-4">
-            <label for="password">Password</label> 
-            <input class="form-control"  type="password" ng-model="password"><br>
-            </div>
-            <div class="form-group row-md-4">
-                <label for="login"></label> 
-                <button class="btn btn-primary" type="button" ng-click="login();" >Login</button>
-                <a href="#" ng-click="newRegisterForm(true)" ng-show="registerlink"  data-toggle="modal" data-target="#registerNewUser" data-whatever="@getbootstrap"> Register</a>
+    <div class="row d-flex justify-content-center">
+        <div ng-show = "loginForm" class="row row-cols-md-auto g-3 align-items-center" >  
+           
+            <div class="form-col loginForm" >
+                <img src="/static/logo.png" width="200px" style="margin-bottom:50px;">
+
+                <div class="form-group row-md-4">
+                <label for="userName">Email</label> 
+                <input class="form-control"  type="text" ng-model="userName"><br>
+                </div>
+                <div class="form-group row-md-4">
+                <label for="password">Password</label> 
+                <input class="form-control"  type="password" ng-model="password"><br>
+                </div>
+                <div class="form-group row-md-4">
+                    <label for="login"></label> 
+                    <button class="btn btn-primary" type="button" ng-click="login();" >Login</button>
+                    <a href="#" ng-click="newRegisterForm(true)" ng-show="registerlink"  data-toggle="modal" data-target="#registerNewUser" data-whatever="@getbootstrap"> Register</a>
+                </div>
             </div>
         </div>
-    </div>
-    
+        
+    </div>   
     <BR><BR><BR>
         
     <div ng-show="!loginForm">   
