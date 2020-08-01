@@ -15,8 +15,12 @@ func Doctor(context echo.Context) error {
 }
 
 //Clinic read a clinic detail
-func Clinic(context echo.Context) error {
-	return nil
+func (s *Server) Clinic(context echo.Context) error {
+	clinics := []model.Clinic{}
+	if err := s.DB.DBORM.Table("clinic").Find(&clinics).Error; err != nil {
+		return err
+	}
+	return context.JSON(http.StatusOK, clinics)
 }
 
 //Appointment read appointment

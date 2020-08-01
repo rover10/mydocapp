@@ -70,7 +70,7 @@
         
     <div ng-show="!loginForm">   
         <button type="button" ng-click="appointments();">Appointments</button>
-        <a href="#" ng-click="showBookAppointment(); getPatients();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap"> New Appointment</a>
+        <a href="#" ng-click="showBookAppointment(); getPatients(); getClinics();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap"> New Appointment</a>
         
         <a href="#" ng-click="logout();">Sign out</a>
     </div> 
@@ -182,9 +182,14 @@
                 <form>
                     <div class="form-row">
                         <div class="form-group col-md-12">
-                            <label for="newappointment.clinicId">Clinic</label>
-                            <input type="text" id="newappointment.clinicId" class="form-control" ng-model = "newappointment.clinicId" placeholder="Clinic ">
-                          </div>
+                            <label for="newappointment.clinicId" >Clinic</label>
+                            <!--input type="text" id="newappointment.clinicId" class="form-control" ng-model = "newappointment.clinicId" placeholder="Clinic " -->
+                            <div class="input-group mb-3">
+                                <select class="custom-select" id="inputGroupSelect02"   ng-model = "newappointment.clinicId">
+                                        <option value="{{x.uid}}"  ng-repeat = "x in clinics">{{x.name  + " " +x.address}}</option>
+                                </select>
+                            </div> 
+                        </div>
             
                           <div class="form-group col-md-12">
                             <label for="newappointment.patientId">Patient</label>
@@ -199,18 +204,17 @@
             
                         <div class="form-group col-md-12">
                             <label for="newappointment.slotDateTime">Appointment date</label>
-                            <input id="newappointment.slotDateTime" class="form-control" ng-model = "newappointment.slotDateTime"  value="2011-08-19T13:45:00" type="datetime-local" placeholder="Slot datetime">
+                            <input id="newappointment.slotDateTime" class="form-control" ng-model = "newappointment.slotDateTime"  value="2011-08-19T13:45:00" type="datetime-local">
                            
-                            <label for="example-datetime-local-input" class="col-2 col-form-label">Date and time</label>
                           </div>
                           <div class="form-group col-md-12">
-                            <label for="newappointment.contactPhone">Contact phone</label>
-                            <input id="newappointment.contactPhone" class="form-control" ng-model = "newappointment.contactPhone" type = "text" placeholder="Age">
+                            <label for="newappointment.contactPhone">Age</label>
+                            <input id="newappointment.contactPhone" class="form-control" ng-model = "newappointment.contactPhone" type = "text" >
                           </div> 
             
                         <div class="form-group col-md-6">
                             <label for="newappointment.diseaseId">Disease</label>
-                            <input id="newappointment.diseaseId" class="form-control" ng-model = "newappointment.diseaseId" type = "text" placeholder="Disease">
+                            <input id="newappointment.diseaseId" class="form-control" ng-model = "newappointment.diseaseId" type = "text" >
                           </div>
                     </div>
             
@@ -341,7 +345,7 @@ app.controller('personCtrl', function($scope, $http) {
         });;
     }
     
-    //
+    // PATIENTS
     $scope.getPatients = function () {
         console.log(config)
         var config = {headers:  {
@@ -353,6 +357,25 @@ app.controller('personCtrl', function($scope, $http) {
             // success
             console.log(response);
             $scope.patients = response.data;
+        }, 
+        function(response) { // optional
+                // failed
+                console.log("Failed")
+        });;
+    }
+
+    // CLINICS
+    $scope.getClinics = function () {
+        console.log(config)
+        var config = {headers:  {
+        'Authorization': 'Bearer ' + $scope.loginToken,
+        'Content-Type': 'application/json'
+        }
+        }; 
+        $http.get("v1/clinics", config).then(function(response) {
+            // success
+            console.log(response);
+            $scope.clinics = response.data;
         }, 
         function(response) { // optional
                 // failed
