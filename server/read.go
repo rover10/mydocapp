@@ -33,6 +33,17 @@ func (s *Server) Appointment(context echo.Context) error {
 
 }
 
+//Patient read linked patient
+func (s *Server) Patient(context echo.Context) error {
+	login := token.GetLoggedIn(context)
+	accountID := login["uid"].(string)
+	patients := []model.Patient{}
+	if err := s.DB.DBORM.Table("patient").Where("account_id = ?", accountID).Find(&patients).Error; err != nil {
+		return err
+	}
+	return context.JSON(http.StatusOK, patients)
+}
+
 //Treatment read treatment detail which includes patient_problem_description, prescription, test
 func Treatment(context echo.Context) error {
 	return nil
