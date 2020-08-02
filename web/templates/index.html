@@ -19,7 +19,6 @@
     .loginForm{
         background: red; 
         border-style: solid;
-        padding: 20px;
         border-radius: 10px;
         border-width: thin;
         border-collapse: green;
@@ -28,27 +27,84 @@
         border-color: #bdbdbd;
         box-shadow: 1px 2px 3px silver;
         background-color: white;
+        background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(147,230,241,1) 0%, rgba(145,192,241,1) 45.5% );
+    }
+    .title{
+        padding: 10px;
+        color:white;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+
+    .bigTitle{
+        font-size:80px;
+        font-size: 72px;
+        
+    }
+    .displayboard{
+        background-image: linear-gradient(-225deg, #FFFEFF 0%, #D7FFFE 100%);
     }
 </style>
 
-<body>
-
-<div ng-app="myApp" ng-controller="personCtrl">
-<div >
-    <div class="row" class=" align-self-center" >
-       
-           
+<body style="background: white;"  ng-app="myApp" ng-controller="personCtrl" >
+    <div class="title ">
+        <div class="container">
+            <nav class="nav" style="float:left">
+                <a class="nav-link active" aria-current="page" href="#">Doctors</a>
+                <a class="nav-link" href="#">Pharmacy</a>
+                <a class="nav-link" href="#">Diagnostic</a>
+            </nav>
+            <nav class="nav" style="float:right">
+                <a class="nav-link align-items-center"  href="#" ng-show="!loginForm" ng-click="logout();">Sign out</a>
+            </nav>
+        </div>
+    </div>
     
+    <BR><BR>
+
+    <div  class="displayboard">
+        <div class="container">
+            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                  <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                  <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                </ol>
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                   <span class="bigTitle">Hello</span>
+
+                    What is new?
+
+                  </div>
+                  <div class="carousel-item">
+                     <span class="bigTitle">How</span>
+                 
+                        How is it better?
+                  </div>
+                  <div class="carousel-item">
+                    <span class="bigTitle">Where</span>
+                   
+                        Where to to look for?
+                  </div>
+                </div>
+               
+              </div>
+        </div>
     </div>
 
-    <BR><BR><BR>
+    <div>   
+        <div class="container">
+        <div class="row" class=" align-self-center" >   
+    </div>
+
+    <BR><BR><BR><BR><BR><BR>
 
     <div class="row d-flex justify-content-center">
         <div ng-show = "loginForm" class="row row-cols-md-auto g-3 align-items-center" >  
            
             <div class="form-col loginForm" >
-                <img src="/static/logo.png" width="200px" style="margin-bottom:50px;">
-
+                <!--img src="/static/logo.png" width="200px" style="margin-bottom:50px;"-->
+                <img src="/static/logo.png" width="150px" style="margin-bottom:50px;">
                 <div class="form-group row-md-4">
                 <label for="userName">Email</label> 
                 <input class="form-control"  type="text" ng-model="userName"><br>
@@ -71,8 +127,6 @@
     <div ng-show="!loginForm">   
         <button type="button" ng-click="appointments();">Appointments</button>
         <a href="#" ng-click="showBookAppointment(); getPatients(); getClinics();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap"> New Appointment</a>
-        
-        <a href="#" ng-click="logout();">Sign out</a>
     </div> 
 
 <!---->
