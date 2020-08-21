@@ -98,7 +98,7 @@
     </div>
 
     <BR><BR><BR>
-        <button ng-click="getQrCode()">QrCode</button>
+        <button ng-click="getQrCode("Rakesh kumar")">QrCode</button>
         <img ng-src="{{qcode}}">
     <div class="row d-flex justify-content-center">
         <div ng-show = "loginForm" class="row row-cols-md-auto g-3 align-items-center" >  
@@ -296,9 +296,12 @@
                 <div class="card">
                   <div class="card-header" id="headingOne">
                     <h2 class="mb-0">
-                      <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#appointment{{$index}}" aria-expanded="true" aria-controls="collapseOne">
+                      <button ng-click="getQrCode(x.uid)" class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#appointment{{$index}}" aria-expanded="true" aria-controls="collapseOne">
                         #{{$index+1}} on {{x.slotDateTime | date}}
                       </button>
+
+
+
                     </h2>
                     <div ></div>
     
@@ -326,7 +329,13 @@
                                     <tr>
                                         <td class = "login"> Booked on </td>
                                         <td>{{x.createdOn  | date }}</td>
-                                    </tr>                                
+                                    </tr>  
+                                    <tr>
+                                        <img ng-src="{{x.qrcode}}">
+                                    </tr>  
+                                    
+                                    
+
                                 </table>
                             </div>
                         </div>
@@ -537,18 +546,28 @@ app.controller('personCtrl', function($scope, $http) {
     }
 
     $scope.qcode = ""
-    $scope.getQrCode = function () {
+    $scope.getQrCode = function (appointmentId) {
         console.log(config)
         var config = {headers:  {
         'Authorization': 'Bearer ' + $scope.loginToken,
         'Content-Type': 'application/json'
         },
-        responseType: 'arraybuffer'
+        responseType: 'arraybuffer',
+        params: {appointmentId: appointmentId},
         }; 
+
         $http.get("v1/qrcode", config).then(function(response) {
             // success
             let blob = new Blob([response.data], {type: "'image/png'"});
             $scope.qcode =  (window.URL || window.webkitURL).createObjectURL(blob);
+            $scope.myappointments
+            for (i = 0; i <  $scope.myappointments.length; i++) {
+                if ($scope.myappointments[i].uid == appointmentId) {
+                    $scope.myappointments[i]["qrcode"] = $scope.qcode;
+                    break;
+                }
+               
+            }
         }, 
         function(response) { // optional
                 // failed

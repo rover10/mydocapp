@@ -28,12 +28,23 @@ func (s *Server) Clinic(context echo.Context) error {
 
 //Clinic read a clinic detail
 func (s *Server) GenerateQr(context echo.Context) error {
-	dataString := "Rakesh"
-	qrCode, _ := qr.Encode(dataString, qr.L, qr.Auto)
-	qrCode, _ = barcode.Scale(qrCode, 128, 128)
-	return png.Encode(context.Response().Writer, qrCode)
-
+	//login := token.GetLoggedIn(context)
+	//accountID := login["uid"].(string)
+	if appointmentID := context.QueryParam("appointmentId"); appointmentID != "" {
+		fmt.Println(appointmentID)
+		qrCode, _ := GenerateQrCode(appointmentID, 128, 128)
+		return png.Encode(context.Response().Writer, qrCode)
+	}
+	return context.JSON(http.StatusNoContent, "")
 	//return context.JSON(http.StatusOK, clinics)
+}
+
+func GenerateQrCode(data string, l int, w int) (barcode.Barcode, error) {
+	qrCode, err := qr.Encode(data, qr.L, qr.Auto)
+	if err != nil {
+		return nil, err
+	}
+	return barcode.Scale(qrCode, l, w)
 }
 
 //Appointment read appointment
