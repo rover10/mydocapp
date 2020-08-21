@@ -13,7 +13,9 @@
 <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
 <style>
     .login {
-            color:grey
+            color:grey;
+            margin-right: 10px;
+            padding-right: 35px;
         }
 
     .loginForm{
@@ -59,11 +61,13 @@
         </div>
     </div>
     
-    <BR><BR>
+    <BR>
 
+    <img src="/static/doctor.png" style="float:left" width="150px" style="margin-bottom:50px;">
     <div  class="displayboard">
         <div class="container">
-            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+           
+            <!--div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
                   <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
                   <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
@@ -71,10 +75,8 @@
                 </ol>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
+                  
                    <span class="bigTitle">Hello</span>
-
-                    What is new?
-
                   </div>
                   <div class="carousel-item">
                      <span class="bigTitle">How</span>
@@ -88,7 +90,7 @@
                   </div>
                 </div>
                
-              </div>
+              </div -->
         </div>
     </div>
 
@@ -97,14 +99,12 @@
         <div class="row" class=" align-self-center" >   
     </div>
 
-    <BR><BR><BR>
-        <button ng-click="getQrCode("Rakesh kumar")">QrCode</button>
-        <img ng-src="{{qcode}}">
+    <BR><BR>
     <div class="row d-flex justify-content-center">
         <div ng-show = "loginForm" class="row row-cols-md-auto g-3 align-items-center" >  
            
             <div class="form-col loginForm" >
-                <!--img src="/static/logo.png" width="200px" style="margin-bottom:50px;"-->
+                <!--img src="/static/logo.png" width="2 00px" style="margin-bottom:50px;"-->
                 <img src="/static/logo.png" width="150px" style="margin-bottom:50px;">
                 <div class="form-group row-md-4">
                 <label for="userName">Email</label> 
@@ -299,7 +299,7 @@
                       <button ng-click="getQrCode(x.uid)" class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#appointment{{$index}}" aria-expanded="true" aria-controls="collapseOne">
                         #{{$index+1}} on {{x.slotDateTime | date}}
                       </button>
-
+                   
 
 
                     </h2>
@@ -308,35 +308,45 @@
                     <div id="appointment{{$index}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                         <div class="card-body">
                             <div>
-                                <table>
-                                    <tr>
-                                        <td class = "login">Appointment no.  </td>
-                                        <td>{{x.uid | uppercase}}</td>
-                                    </tr>
-                                    
-                                    <tr>
-                                        <td class = "login">On </td>
-                                        <td>{{x.slotDateTime | date}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class = "login"> Clinic </td>
-                                        <td> {{x.clinicId | uppercase}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class = "login">Cancelled </td>
-                                        <td>{{x.cancelled}} </td>
-                                    </tr>
-                                    <tr>
-                                        <td class = "login"> Booked on </td>
-                                        <td>{{x.createdOn  | date }}</td>
-                                    </tr>  
-                                    <tr>
+                                <div class="row">
+                                    <div class="col-md-3">
                                         <img ng-src="{{x.qrcode}}">
-                                    </tr>  
-                                    
-                                    
-
-                                </table>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    <button class="btn btn-link  text-left" type="button" style="color:red;">Cancel</button> 
+                                                    <button class="btn btn-link text-left" type="button" style="color:green;" >Re-schedule</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class = "login">Appointment no.  </td>
+                                                <td>{{x.uid | uppercase}}</td>
+                                            </tr>
+                                            
+                                            <tr>
+                                                <td class = "login">On </td>
+                                                <td>{{x.slotDateTime | date}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class = "login"> Clinic </td>
+                                                <td> {{x.clinicId | uppercase}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class = "login">Cancelled </td>
+                                                <td>{{x.cancelled}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class = "login"> Booked on </td>
+                                                <td>{{x.createdOn  | date }}</td>
+                                            </tr>  
+                                            
+                                        
+                                        </table>
+                                    </div> 
+                                </div>
+                                
                             </div>
                         </div>
                       </div>
