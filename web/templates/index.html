@@ -27,7 +27,7 @@
         border-color: #bdbdbd;
         box-shadow: 1px 2px 3px silver;
         background-color: white;
-        background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(147,230,241,1) 0%, rgba(145,192,241,1) 45.5% );
+        --background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(147,230,241,1) 0%, rgba(145,192,241,1) 45.5% );
     }
     .title{
         padding: 10px;
@@ -41,7 +41,7 @@
         
     }
     .displayboard{
-        background-image: linear-gradient(-225deg, #FFFEFF 0%, #D7FFFE 100%);
+        background:white; 
     }
 </style>
 
@@ -97,8 +97,9 @@
         <div class="row" class=" align-self-center" >   
     </div>
 
-    <BR><BR><BR><BR><BR><BR>
-
+    <BR><BR><BR>
+        <button ng-click="getQrCode()">QrCode</button>
+        <img ng-src="{{qcode}}">
     <div class="row d-flex justify-content-center">
         <div ng-show = "loginForm" class="row row-cols-md-auto g-3 align-items-center" >  
            
@@ -122,8 +123,7 @@
         </div>
         
     </div>   
-    <BR><BR><BR>
-        
+    
     <div ng-show="!loginForm">   
         <button type="button" ng-click="appointments();">Appointments</button>
         <a href="#" ng-click="showBookAppointment(); getPatients(); getClinics();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap"> New Appointment</a>
@@ -535,6 +535,40 @@ app.controller('personCtrl', function($scope, $http) {
                 console.log("Failed")
         });;
     }
+
+    $scope.qcode = ""
+    $scope.getQrCode = function () {
+        console.log(config)
+        var config = {headers:  {
+        'Authorization': 'Bearer ' + $scope.loginToken,
+        'Content-Type': 'application/json'
+        },
+        responseType: 'arraybuffer'
+        }; 
+        $http.get("v1/qrcode", config).then(function(response) {
+            // success
+            let blob = new Blob([response.data], {type: "'image/png'"});
+            $scope.qcode =  (window.URL || window.webkitURL).createObjectURL(blob);
+        }, 
+        function(response) { // optional
+                // failed
+                console.log("Failed")
+        });;
+    }
+
+    //
+    $scope.arrayBufferToBase64 =  function (buffer) {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        console.log("--->**")
+        console.log(bytes)
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            console.log("--->")
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+  }
 });
 </script>
 

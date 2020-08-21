@@ -2,8 +2,11 @@ package server
 
 import (
 	"fmt"
+	"image/png"
 	"net/http"
 
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/qr"
 	"github.com/labstack/echo"
 	"github.com/rover10/mydocapp.git/model"
 	"github.com/rover10/mydocapp.git/token"
@@ -21,6 +24,16 @@ func (s *Server) Clinic(context echo.Context) error {
 		return err
 	}
 	return context.JSON(http.StatusOK, clinics)
+}
+
+//Clinic read a clinic detail
+func (s *Server) GenerateQr(context echo.Context) error {
+	dataString := "Rakesh"
+	qrCode, _ := qr.Encode(dataString, qr.L, qr.Auto)
+	qrCode, _ = barcode.Scale(qrCode, 128, 128)
+	return png.Encode(context.Response().Writer, qrCode)
+
+	//return context.JSON(http.StatusOK, clinics)
 }
 
 //Appointment read appointment
