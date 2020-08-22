@@ -30,16 +30,17 @@
         }
 
     .loginForm{
-        background: red; 
         border-style: solid;
         border-radius: 10px;
         border-width: thin;
         border-collapse: green;
         padding: 60px;
         border-color: #e5f1e5;
-        border-color: #bdbdbd;
-        box-shadow: 1px 2px 3px silver;
-        background-color: white;
+        border-color: #c4ecf3;
+        box-shadow: 1px 1px 2px #bdd7db;
+        --border-color: #bdbdbd;
+        --box-shadow: 1px 2px 3px silver;
+        --background-color: #f5f5f5;
         --background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(147,230,241,1) 0%, rgba(145,192,241,1) 45.5% );
     }
     .title{
@@ -69,13 +70,52 @@
             <nav class="nav" style="float:right">
                 <a class="nav-link align-items-center"  href="#" ng-show="!loginForm" ng-click="logout();">Sign out</a>
             </nav>
+
+
+            <BR>            <BR>            <BR>
+            <div class="row " >
+                <div class="col-md-3">
+                    <img  ng-show="loginForm" src="/static/doctor.png"  width="200px" style="margin-bottom:50px;">
+                </div>
+        
+                <div class="col-md-4 align-self-center" style="padding:20px;">
+                    <span style= "font-size: 40px;font-weight: lighter; color: #71aab3;">Tension free simple doctor appointment app</span>
+                </div>
+            
+                <div class="col-md-5">
+                    <div class="row d-flex justify-content-center">
+                        <div ng-show = "loginForm" class="row row-cols-md-auto g-3 align-items-center" >  
+                           
+                            <div class="form-col loginForm" >
+                                <!--img src="/static/logo.png" width="2 00px" style="margin-bottom:50px;"-->
+                                <img src="/static/logo.png" width="150px" style="margin-bottom:50px;">
+                                <div class="form-group row-md-4">
+                                <label for="userName">Email</label> 
+                                <input class="form-control"  type="text" ng-model="userName"><br>
+                                </div>
+                                <div class="form-group row-md-4">
+                                <label for="password">Password</label> 
+                                <input class="form-control"  type="password" ng-model="password"><br>
+                                </div>
+                                <div class="form-group row-md-4">
+                                    <label for="login"></label> 
+                                    <button class="btn btn-primary" type="button" ng-click="login();" >Login</button>
+                                    <a href="#" ng-click="newRegisterForm(true)" ng-show="registerlink"  data-toggle="modal" data-target="#registerNewUser" data-whatever="@getbootstrap"> Register</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>  
+                </div>
+               
+            </div>
+            
         </div>
     </div>
     
     <BR>
-
-    <img src="/static/doctor.png" style="float:left" width="150px" style="margin-bottom:50px;">
-    <div  class="displayboard">
+    
+        <div  class="displayboard">
         <div class="container">
            
             <!--div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -111,33 +151,16 @@
     </div>
 
     <BR><BR>
-    <div class="row d-flex justify-content-center">
-        <div ng-show = "loginForm" class="row row-cols-md-auto g-3 align-items-center" >  
-           
-            <div class="form-col loginForm" >
-                <!--img src="/static/logo.png" width="2 00px" style="margin-bottom:50px;"-->
-                <img src="/static/logo.png" width="150px" style="margin-bottom:50px;">
-                <div class="form-group row-md-4">
-                <label for="userName">Email</label> 
-                <input class="form-control"  type="text" ng-model="userName"><br>
-                </div>
-                <div class="form-group row-md-4">
-                <label for="password">Password</label> 
-                <input class="form-control"  type="password" ng-model="password"><br>
-                </div>
-                <div class="form-group row-md-4">
-                    <label for="login"></label> 
-                    <button class="btn btn-primary" type="button" ng-click="login();" >Login</button>
-                    <a href="#" ng-click="newRegisterForm(true)" ng-show="registerlink"  data-toggle="modal" data-target="#registerNewUser" data-whatever="@getbootstrap"> Register</a>
-                </div>
-            </div>
-        </div>
-        
-    </div>   
+     
     
-    <div ng-show="!loginForm">   
-        <button type="button" ng-click="appointments();">Appointments</button>
-        <a href="#" ng-click="showBookAppointment(); getPatients(); getClinics();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap"> New Appointment</a>
+    <div ng-show="!loginForm" style = "margin-bottom: 50px;">   
+        <button ng-click="appointments();" class="btn btn-link text-left" type="button" >
+            <i class="material-icons">history</i>  Appointments
+        </button>
+
+        <button ng-click="showBookAppointment(); getPatients(); getClinics();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap" class="btn btn-link text-left" type="button" >
+            <i class="material-icons">add</i> New Appointment
+        </button>
     </div> 
 
 <!---->
@@ -306,11 +329,30 @@
         <div ng-repeat = "x in myappointments" class="accordion" id="accordionExample">
                 <div class="card">
                   <div class="card-header" id="headingOne">
-                    <h2 class="mb-0">
-                      <button ng-click="getQrCode(x.uid)" class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#appointment{{$index}}" aria-expanded="true" aria-controls="collapseOne">
-                        <strong>Appointment {{$index+1}} </strong>  {{x.slotDateTime | date}}
-                      </button>
-                    </h2>
+                    
+                    
+                   
+                  
+                        <div class="btn-group btn-group-sm row" role="group" aria-label="Button group with nested dropdown">
+                            <div class="btn-group btn-group-sm" role="group">
+                              <button id="btnGroupDrop{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="material-icons">more_vert</i>
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{$index}}">
+                                <a class="dropdown-item" href="#cancelApp{{$index}}">Cancel</a>
+                                <a class="dropdown-item" href="#reschedule{{$index}}">Re-schedule</a>
+                              </div>
+                            </div>
+                            <div class="float-right">
+                                <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointment{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
+                                    <i class="material-icons">expand_more</i>
+                                    <strong>Appointment {{$index+1}} </strong>  {{x.slotDateTime | date}}
+                                </button>
+                            </div>
+                          </div>
+                 
+                         
+
                     <div id="appointment{{$index}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                         <div class="card-body">            
                                 <div class="row">
@@ -319,12 +361,6 @@
                                     </div>
                                     <div class="col-md-8">
                                         <table>
-                                            <tr>
-                                                <td>
-                                                    <button class="btn btn-link  text-left" type="button" style="color:red;">Cancel</button> 
-                                                    <button class="btn btn-link text-left" type="button" style="color:green;" >Re-schedule</button>
-                                                </td>
-                                            </tr>
                                             <tr>
                                                 <td class = "login">Appointment no.  </td>
                                                 <td>{{x.uid | uppercase}}</td>
@@ -349,19 +385,7 @@
                                             
                                         </table>
                                     </div> 
-                                    <div class="col-md-1 align-items-right">
-                                        <div class="btn-group btn-group-sm" role="group" aria-label="Button group with nested dropdown">
-                                            <div class="btn-group btn-group-sm" role="group">
-                                              <button id="btnGroupDrop{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="material-icons">more_vert</i>
-                                              </button>
-                                              <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{$index}}">
-                                                <a class="dropdown-item" href="#cancelApp{{$index}}">Cancel</a>
-                                                <a class="dropdown-item" href="#reschedule{{$index}}">Re-schedule</a>
-                                              </div>
-                                            </div>
-                                          </div>
-                                    </div>
+                                    
                                 </div>
                                 
                         </div>
