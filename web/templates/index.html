@@ -4,14 +4,25 @@
 <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
 
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+<!--script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script -->
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>   
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
-<script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+<script>
+    $(document).ready(function() { $('body').bootstrapMaterialDesign(); });
+</script>
+    <!-- Material Design Lite -->
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <!-- Material Design icon font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <style>
+    #demo-menu-lower-left {
+        margin-left: 40%;
+    }
+
     .login {
             color:grey;
             margin-right: 10px;
@@ -297,22 +308,16 @@
                   <div class="card-header" id="headingOne">
                     <h2 class="mb-0">
                       <button ng-click="getQrCode(x.uid)" class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#appointment{{$index}}" aria-expanded="true" aria-controls="collapseOne">
-                        #{{$index+1}} on {{x.slotDateTime | date}}
+                        <strong>Appointment {{$index+1}} </strong>  {{x.slotDateTime | date}}
                       </button>
-                   
-
-
                     </h2>
-                    <div ></div>
-    
                     <div id="appointment{{$index}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                        <div class="card-body">
-                            <div>
+                        <div class="card-body">            
                                 <div class="row">
                                     <div class="col-md-3">
                                         <img ng-src="{{x.qrcode}}">
                                     </div>
-                                    <div class="col-md-9">
+                                    <div class="col-md-8">
                                         <table>
                                             <tr>
                                                 <td>
@@ -342,12 +347,23 @@
                                                 <td>{{x.createdOn  | date }}</td>
                                             </tr>  
                                             
-                                        
                                         </table>
                                     </div> 
+                                    <div class="col-md-1 align-items-right">
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="Button group with nested dropdown">
+                                            <div class="btn-group btn-group-sm" role="group">
+                                              <button id="btnGroupDrop{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="material-icons">more_vert</i>
+                                              </button>
+                                              <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{$index}}">
+                                                <a class="dropdown-item" href="#cancelApp{{$index}}">Cancel</a>
+                                                <a class="dropdown-item" href="#reschedule{{$index}}">Re-schedule</a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                    </div>
                                 </div>
                                 
-                            </div>
                         </div>
                       </div>
     
