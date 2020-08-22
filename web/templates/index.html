@@ -67,15 +67,25 @@
                 <a class="nav-link" href="#">Pharmacy</a>
                 <a class="nav-link" href="#">Diagnostic</a>
             </nav>
+
             <nav class="nav" style="float:right">
+                <div ng-show="!loginForm" style = "margin-bottom: 50px;">   
+                    <button ng-click="appointments();" class="btn btn-link text-left" type="button" >
+                        <i class="material-icons">history</i>  Appointments
+                    </button>
+            
+                    <button ng-click="showBookAppointment(); getPatients(); getClinics();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap" class="btn btn-link text-left" type="button" >
+                        <i class="material-icons">add</i> New Appointment
+                    </button>
+                </div> 
                 <a class="nav-link align-items-center"  href="#" ng-show="!loginForm" ng-click="logout();">Sign out</a>
             </nav>
 
 
             <BR>            <BR>            <BR>
-            <div class="row " >
+            <div class="row" ng-show="loginForm">
                 <div class="col-md-3">
-                    <img  ng-show="loginForm" src="/static/doctor.png"  width="200px" style="margin-bottom:50px;">
+                    <img   src="/static/doctor.png"  width="200px" style="margin-bottom:50px;">
                 </div>
         
                 <div class="col-md-4 align-self-center" style="padding:20px;">
@@ -84,7 +94,7 @@
             
                 <div class="col-md-5">
                     <div class="row d-flex justify-content-center">
-                        <div ng-show = "loginForm" class="row row-cols-md-auto g-3 align-items-center" >  
+                        <div class="row row-cols-md-auto g-3 align-items-center" >  
                            
                             <div class="form-col loginForm" >
                                 <!--img src="/static/logo.png" width="2 00px" style="margin-bottom:50px;"-->
@@ -153,15 +163,7 @@
     <BR><BR>
      
     
-    <div ng-show="!loginForm" style = "margin-bottom: 50px;">   
-        <button ng-click="appointments();" class="btn btn-link text-left" type="button" >
-            <i class="material-icons">history</i>  Appointments
-        </button>
 
-        <button ng-click="showBookAppointment(); getPatients(); getClinics();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap" class="btn btn-link text-left" type="button" >
-            <i class="material-icons">add</i> New Appointment
-        </button>
-    </div> 
 
 <!---->
     <div class="modal fade" id="registerNewUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
