@@ -76,14 +76,13 @@ func (s *Server) AppointmentV2(context echo.Context) error {
 		Table("appointment").
 		Preload("Clinic", func(db *gorm.DB) *gorm.DB {
 			return db.
-				Table("clinic") //.
-			//Joins("INNER JOIN appointment ON appointment.clinic_id = clinic.uid ").
-			//Where("clinic.uid = appointment.clinic_id")
-
-			//.
-			//Select("clinic.uid, clinic.name, clinic.address, clinic.phone, clinic.email").
-			//Joins("INNER JOIN appointment on clinic.uid = appointment.clinic_id")
-			//Where("")
+				Table("clinic")
+		}).
+		Preload("Patient", func(db *gorm.DB) *gorm.DB {
+			return db.Table("patient")
+		}).
+		Preload("Doctor", func(db *gorm.DB) *gorm.DB {
+			return db.Table("doctor")
 		}).
 		Where("account_id = ?", accountID).
 		Find(&appointments).Error; err != nil {
