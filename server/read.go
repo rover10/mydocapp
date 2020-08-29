@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/png"
 	"net/http"
+	"strings"
 
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
@@ -69,9 +70,26 @@ func (s *Server) AppointmentV2(context echo.Context) error {
 	accountID := login["uid"].(string)
 	fmt.Println(accountID)
 	appointments := []response.Appointment{}
+
+	cancelledS := context.QueryParam("isCancelled")
+	historyS := context.QueryParam("history")
+	isCancelled := false
+	history := false
+
+	if cancelledS != "" {
+		if strings.ToLower(cancelledS) == "true" {
+			isCancelled = true
+		}
+	}
+
+	if historyS != "" {
+		if strings.ToLower(historyS) == "true" {
+			isCancelled = true
+		}
+	}
 	//.Preload("Clinic").Preload("Patient").Preload("Doctor")
 	//clinic := response.Clinic{}
-	if err := s.DB.DBORM.Debug().
+	ret := s.DB.DBORM.Debug().
 		//Preload("Clinic").
 		Table("appointment").
 		Preload("Clinic", func(db *gorm.DB) *gorm.DB {
@@ -83,9 +101,18 @@ func (s *Server) AppointmentV2(context echo.Context) error {
 		}).
 		Preload("Doctor", func(db *gorm.DB) *gorm.DB {
 			return db.Table("doctor")
-		}).
-		Where("account_id = ?", accountID).
-		Find(&appointments).Error; err != nil {
+		})
+
+	//	Where("account_id = ?", accountID)
+	if isCancelled {
+		ret = ret.Where("account_id = ? AND cancelled = 'True'", accountID)
+	} else if history {
+		ret = ret.Where("account_id = ? AND slot_date_time < now()", accountID)
+	} else {
+		ret = ret.Where("account_id = ? AND slot_date_time > now()", accountID)
+	}
+
+	if err := ret.Find(&appointments).Error; err != nil {
 		return err
 	}
 
