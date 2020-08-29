@@ -354,15 +354,15 @@
 <BR> <BR>
 <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect" ng-show="!loginForm">
     <div class="mdl-tabs__tab-bar">
-        <a href="#starks-panel" class="mdl-tabs__tab is-active" id="tt1"><i class="material-icons">insert_invitation</i>  &nbsp;  SCHEDULED</a>
+        <a href="#starks-panel" class="mdl-tabs__tab is-active" id="tt1" ng-click="appointments(false,false);"><i class="material-icons">insert_invitation</i>  &nbsp;  SCHEDULED</a>
         <div class="mdl-tooltip" data-mdl-for="tt1">
             SCHEDULED
         </div>
-        <a href="#lannisters-panel" class="mdl-tabs__tab"  id="tt2" ng-click="appointments('true','false');"><i class="material-icons">history</i>  &nbsp; VISITED</a>
+        <a href="#lannisters-panel" class="mdl-tabs__tab"  id="tt2" ng-click="appointments(false,true);"><i class="material-icons">history</i>  &nbsp; VISITED</a>
         <div class="mdl-tooltip" data-mdl-for="tt2">
             VISITED
         </div>
-        <a href="#targaryens-panel" class="mdl-tabs__tab"  id="tt3" ng-click="appointments('false','true');"><i class="material-icons">close</i>  &nbsp;CANCELLED</a>
+        <a href="#targaryens-panel" class="mdl-tabs__tab"  id="tt3" ng-click="appointments(true,false);"><i class="material-icons">close</i>  &nbsp;CANCELLED</a>
         <div class="mdl-tooltip" data-mdl-for="tt3">
             CANCELLED
         </div>
@@ -454,25 +454,25 @@
     <div class="mdl-tabs__panel" id="lannisters-panel">
       
         <div>
-            <div ng-repeat = "x in mycancelappointments" class="accordion" id="mycancelappointments2">
+            <div ng-repeat = "x in myvisitedappointments" class="accordion" id="myvisitedappointments3">
                     <div class="card">
-                      <div class="card-header" id="headingOne2">
+                      <div class="card-header" id="headingOne3">
                         
                         
                        
                       
                             <div class="btn-group btn-group-sm row" role="group" aria-label="Button group with nested dropdown">
                                 <div class="btn-group btn-group-sm" role="group">
-                                  <button id="btnGroupDropCancel{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <button id="btnGroupDropVisi{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons">more_vert</i>
                                   </button>
-                                  <div class="dropdown-menu" aria-labelledby="btnGroupDropCancel{{$index}}">
-                                    <a class="dropdown-item" href="#cancelAppCancel{{$index}}">Cancel</a>
-                                    <a class="dropdown-item" href="#rescheduleCancel{{$index}}">Re-schedule</a>
+                                  <div class="dropdown-menu" aria-labelledby="btnGroupDropVis{{$index}}">
+                                    <a class="dropdown-item" href="#cancelAppVis{{$index}}">Cancel</a>
+                                    <a class="dropdown-item" href="#rescheduleVis{{$index}}">Re-schedule</a>
                                   </div>
                                 </div>
                                 <div class="float-right">
-                                    <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointmentCancel{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
+                                    <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointmentVis{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
                                         <i class="material-icons">expand_more</i>
                                         <strong>Appointment {{$index+1}} </strong>  {{x.slotDateTime | date}}
                                     </button>
@@ -481,7 +481,7 @@
                      
                              
     
-                        <div id="appointmentCancel{{$index}}" class="collapse" aria-labelledby="headingOne2" data-parent="#mycancelappointments2">
+                        <div id="appointmentVis{{$index}}" class="collapse" aria-labelledby="headingOne3" data-parent="#myvisitedappointments3">
                             <div class="card-body">            
                                     <div class="row">
                                         <!--div class="col-md-2">
@@ -531,26 +531,27 @@
     </div>
     <div class="mdl-tabs__panel" id="targaryens-panel">
      
+        
         <div>
-            <div ng-repeat = "x in myvisitedappointments" class="accordion" id="myvisitedappointments3">
+            <div ng-repeat = "x in mycancelappointments" class="accordion" id="mycancelappointments2">
                     <div class="card">
-                      <div class="card-header" id="headingOne3">
+                      <div class="card-header" id="headingOne2">
                         
                         
                        
                       
                             <div class="btn-group btn-group-sm row" role="group" aria-label="Button group with nested dropdown">
                                 <div class="btn-group btn-group-sm" role="group">
-                                  <button id="btnGroupDropVisi{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <button id="btnGroupDropCancel{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons">more_vert</i>
                                   </button>
-                                  <div class="dropdown-menu" aria-labelledby="btnGroupDropVis{{$index}}">
-                                    <a class="dropdown-item" href="#cancelAppVis{{$index}}">Cancel</a>
-                                    <a class="dropdown-item" href="#rescheduleVis{{$index}}">Re-schedule</a>
+                                  <div class="dropdown-menu" aria-labelledby="btnGroupDropCancel{{$index}}">
+                                    <a class="dropdown-item" href="#cancelAppCancel{{$index}}">Cancel</a>
+                                    <a class="dropdown-item" href="#rescheduleCancel{{$index}}">Re-schedule</a>
                                   </div>
                                 </div>
                                 <div class="float-right">
-                                    <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointmentVis{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
+                                    <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointmentCancel{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
                                         <i class="material-icons">expand_more</i>
                                         <strong>Appointment {{$index+1}} </strong>  {{x.slotDateTime | date}}
                                     </button>
@@ -559,7 +560,7 @@
                      
                              
     
-                        <div id="appointmentVis{{$index}}" class="collapse" aria-labelledby="headingOne3" data-parent="#myvisitedappointments3">
+                        <div id="appointmentCancel{{$index}}" class="collapse" aria-labelledby="headingOne2" data-parent="#mycancelappointments2">
                             <div class="card-body">            
                                     <div class="row">
                                         <!--div class="col-md-2">
@@ -683,11 +684,16 @@ app.controller('personCtrl', function($scope, $http) {
         $http.get("v2/appointment", config).then(function(response) {
             // success
             console.log(response);
-            if (isCancelled === 'true') {
+            if (isCancelled == true) {
+                console.log(isCancelled)
+                console.log("Cancelled");
                 $scope.mycancelappointments = response.data;
-            } else if (history === 'true') {
+            } else if (history == true) {
+                console.log(history)
+                console.log("History");
                 $scope.myvisitedappointments = response.data;
             } else {
+                console.log("Upcoming");
                 $scope.myappointments = response.data;
             }
         }, 

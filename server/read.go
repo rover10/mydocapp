@@ -84,7 +84,7 @@ func (s *Server) AppointmentV2(context echo.Context) error {
 
 	if historyS != "" {
 		if strings.ToLower(historyS) == "true" {
-			isCancelled = true
+			history = true
 		}
 	}
 	//.Preload("Clinic").Preload("Patient").Preload("Doctor")
