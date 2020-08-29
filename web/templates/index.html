@@ -95,9 +95,12 @@
                     <button ng-click="showBookAppointment(); getPatients(); getClinics();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap" class="btn btn-link text-left" type="button" >
                         <i class="material-icons">add</i> New Appointment
                     </button>
-                    <button ng-click="" class="btn btn-link text-left" type="button" >
+                    <button ng-click="" class="btn btn-link text-left" type="button" id="ttsetting">
                         <i class="material-icons">settings</i>
                     </button>
+                    <div class="mdl-tooltip" data-mdl-for="ttsetting">
+                        Account settings
+                    </div>
                 </div> 
                 
               
@@ -348,16 +351,21 @@
     
 </div>
 
-
-
-
-
-
-<div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+<BR> <BR>
+<div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect" ng-show="!loginForm">
     <div class="mdl-tabs__tab-bar">
-        <a href="#starks-panel" class="mdl-tabs__tab is-active"><i class="material-icons">insert_invitation</i>  &nbsp;  SCHEDULED</a>
-        <a href="#lannisters-panel" class="mdl-tabs__tab"><i class="material-icons">history</i>  &nbsp; VISITED</a>
-        <a href="#targaryens-panel" class="mdl-tabs__tab"><i class="material-icons">close</i>  &nbsp;CANCELLED</a>
+        <a href="#starks-panel" class="mdl-tabs__tab is-active" id="tt1"><i class="material-icons">insert_invitation</i>  &nbsp;  SCHEDULED</a>
+        <div class="mdl-tooltip" data-mdl-for="tt1">
+            SCHEDULED
+        </div>
+        <a href="#lannisters-panel" class="mdl-tabs__tab"  id="tt2"><i class="material-icons">history</i>  &nbsp; VISITED</a>
+        <div class="mdl-tooltip" data-mdl-for="tt2">
+            VISITED
+        </div>
+        <a href="#targaryens-panel" class="mdl-tabs__tab"  id="tt3"><i class="material-icons">close</i>  &nbsp;CANCELLED</a>
+        <div class="mdl-tooltip" data-mdl-for="tt3">
+            CANCELLED
+        </div>
     </div>
   
     <div class="mdl-tabs__panel is-active" id="starks-panel">
