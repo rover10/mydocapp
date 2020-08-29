@@ -88,10 +88,7 @@
 
             <nav class="nav" style="float:right">
                 <div ng-show="!loginForm" style = "margin-bottom: 50px;">   
-                    <button ng-click="appointments('false','false');" class="btn btn-link text-left" type="button" >
-                        <i class="material-icons">history</i>  Appointments
-                    </button>
-            
+    
                     <button ng-click="showBookAppointment(); getPatients(); getClinics();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap" class="btn btn-link text-left" type="button" >
                         <i class="material-icons">add</i> New Appointment
                     </button>
@@ -457,20 +454,8 @@
             <div ng-repeat = "x in myvisitedappointments" class="accordion" id="myvisitedappointments3">
                     <div class="card">
                       <div class="card-header" id="headingOne3">
-                        
-                        
-                       
-                      
                             <div class="btn-group btn-group-sm row" role="group" aria-label="Button group with nested dropdown">
-                                <div class="btn-group btn-group-sm" role="group">
-                                  <button id="btnGroupDropVisi{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="material-icons">more_vert</i>
-                                  </button>
-                                  <div class="dropdown-menu" aria-labelledby="btnGroupDropVis{{$index}}">
-                                    <a class="dropdown-item" href="#cancelAppVis{{$index}}">Cancel</a>
-                                    <a class="dropdown-item" href="#rescheduleVis{{$index}}">Re-schedule</a>
-                                  </div>
-                                </div>
+                                
                                 <div class="float-right">
                                     <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointmentVis{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
                                         <i class="material-icons">expand_more</i>
@@ -541,15 +526,6 @@
                        
                       
                             <div class="btn-group btn-group-sm row" role="group" aria-label="Button group with nested dropdown">
-                                <div class="btn-group btn-group-sm" role="group">
-                                  <button id="btnGroupDropCancel{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="material-icons">more_vert</i>
-                                  </button>
-                                  <div class="dropdown-menu" aria-labelledby="btnGroupDropCancel{{$index}}">
-                                    <a class="dropdown-item" href="#cancelAppCancel{{$index}}">Cancel</a>
-                                    <a class="dropdown-item" href="#rescheduleCancel{{$index}}">Re-schedule</a>
-                                  </div>
-                                </div>
                                 <div class="float-right">
                                     <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointmentCancel{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
                                         <i class="material-icons">expand_more</i>
