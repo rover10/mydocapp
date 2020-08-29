@@ -95,7 +95,13 @@
                     <button ng-click="showBookAppointment(); getPatients(); getClinics();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap" class="btn btn-link text-left" type="button" >
                         <i class="material-icons">add</i> New Appointment
                     </button>
+                    <button ng-click="" class="btn btn-link text-left" type="button" >
+                        <i class="material-icons">settings</i>
+                    </button>
                 </div> 
+                
+              
+
                 <a class="nav-link align-items-center"  href="#" ng-show="!loginForm" ng-click="logout();">  <i class="material-icons">lock</i>  Log out</a>
             </nav>
 
@@ -345,85 +351,135 @@
 
 
 
-    <div>
-        <div ng-repeat = "x in myappointments" class="accordion" id="accordionExample">
-                <div class="card">
-                  <div class="card-header" id="headingOne">
-                    
-                    
-                   
-                  
-                        <div class="btn-group btn-group-sm row" role="group" aria-label="Button group with nested dropdown">
-                            <div class="btn-group btn-group-sm" role="group">
-                              <button id="btnGroupDrop{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="material-icons">more_vert</i>
-                              </button>
-                              <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{$index}}">
-                                <a class="dropdown-item" href="#cancelApp{{$index}}">Cancel</a>
-                                <a class="dropdown-item" href="#reschedule{{$index}}">Re-schedule</a>
+
+
+<div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+    <div class="mdl-tabs__tab-bar">
+        <a href="#starks-panel" class="mdl-tabs__tab is-active"><i class="material-icons">insert_invitation</i>  &nbsp;  SCHEDULED</a>
+        <a href="#lannisters-panel" class="mdl-tabs__tab"><i class="material-icons">history</i>  &nbsp; VISITED</a>
+        <a href="#targaryens-panel" class="mdl-tabs__tab"><i class="material-icons">close</i>  &nbsp;CANCELLED</a>
+    </div>
+  
+    <div class="mdl-tabs__panel is-active" id="starks-panel">
+      
+
+
+        <div>
+            <div ng-repeat = "x in myappointments" class="accordion" id="accordionExample">
+                    <div class="card">
+                      <div class="card-header" id="headingOne">
+                        
+                        
+                       
+                      
+                            <div class="btn-group btn-group-sm row" role="group" aria-label="Button group with nested dropdown">
+                                <div class="btn-group btn-group-sm" role="group">
+                                  <button id="btnGroupDrop{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="material-icons">more_vert</i>
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{$index}}">
+                                    <a class="dropdown-item" href="#cancelApp{{$index}}">Cancel</a>
+                                    <a class="dropdown-item" href="#reschedule{{$index}}">Re-schedule</a>
+                                  </div>
+                                </div>
+                                <div class="float-right">
+                                    <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointment{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
+                                        <i class="material-icons">expand_more</i>
+                                        <strong>Appointment {{$index+1}} </strong>  {{x.slotDateTime | date}}
+                                    </button>
+                                </div>
                               </div>
-                            </div>
-                            <div class="float-right">
-                                <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointment{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
-                                    <i class="material-icons">expand_more</i>
-                                    <strong>Appointment {{$index+1}} </strong>  {{x.slotDateTime | date}}
-                                </button>
-                            </div>
-                          </div>
-                 
-                         
-
-                    <div id="appointment{{$index}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                        <div class="card-body">            
-                                <div class="row">
-                                    <!--div class="col-md-2">
-                                        <img ng-src="{{x.qrcode}}">
-                                    </div-->
-                                    <div class="col-md-4">
-                                        <!--div class="col">
-                                            <div class="row appointmentDetailHeader">APPOINTMENT </div>
-                                            <div class="row appointmentDetailData"><h6>{{x.uid | uppercase}}</h6> </div>
-                                        </div-->
-                                        <div class="col">
-                                            <div class="row appointmentDetailHeader"><i class="material-icons">insert_invitation</i>  &nbsp; APPOINTMENT DATE   </div>
-                                            <div class="row"><h6>{{x.slotDateTime | date}}</h6>  </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="row appointmentDetailHeader">CANCELLATION   </div>
-                                            <div class="row appointmentDetailData"><h6>{{x.cancelled}}</h6>   </div>
-                                        </div>
-                                
-                                        <div class="col">
-                                            <div class="row appointmentDetailHeader"> BOOKING DATE </div>
-                                            <div class="row appointmentDetailData"><h6>{{x.createdOn  | date }}  </h6></div>
-                                        </div>
-                                    </div> 
-                                    <div class="col-md-4">
-                                        <div class="row appointmentDetailHeader"> <i class="material-icons">business</i> &nbsp; CLINIC / HOSPITAL  </div>
-                                        <h6><b> 
-                                            {{x.clinic.name}},</b> {{x.clinic.address}} </h6>
-                                        <h6> <i class="material-icons">phone</i> {{x.clinic.phone}}</h6>
-                                        <div class="">
+                     
+                             
+    
+                        <div id="appointment{{$index}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body">            
+                                    <div class="row">
+                                        <!--div class="col-md-2">
                                             <img ng-src="{{x.qrcode}}">
+                                        </div-->
+                                        <div class="col-md-4">
+                                            <!--div class="col">
+                                                <div class="row appointmentDetailHeader">APPOINTMENT </div>
+                                                <div class="row appointmentDetailData"><h6>{{x.uid | uppercase}}</h6> </div>
+                                            </div-->
+                                            <div class="col">
+                                                <div class="row appointmentDetailHeader"><i class="material-icons">insert_invitation</i>  &nbsp; APPOINTMENT DATE   </div>
+                                                <div class="row"><h6>{{x.slotDateTime | date}}</h6>  </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="row appointmentDetailHeader">CANCELLATION   </div>
+                                                <div class="row appointmentDetailData"><h6>{{x.cancelled}}</h6>   </div>
+                                            </div>
+                                    
+                                            <div class="col">
+                                                <div class="row appointmentDetailHeader"> BOOKING DATE </div>
+                                                <div class="row appointmentDetailData"><h6>{{x.createdOn  | date }}  </h6></div>
+                                            </div>
+                                        </div> 
+                                        <div class="col-md-4">
+                                            <div class="row appointmentDetailHeader"> <i class="material-icons">business</i> &nbsp; CLINIC / HOSPITAL  </div>
+                                            <h6><b> 
+                                                {{x.clinic.name}},</b> {{x.clinic.address}} </h6>
+                                            <h6> <i class="material-icons">phone</i> git{{x.clinic.phone}}</h6>
+                                            <div class="">
+                                                <img ng-src="{{x.qrcode}}">
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="row appointmentDetailHeader"><i class="material-icons">person</i>  PATIENT </div>
-                                        <h6> {{x.patient.firstName}}</h6>
-                                        <h6> <i class="material-icons">phone</i> {{x.patient.phone}}</h6>
+    
+                                        <div class="col-md-4">
+                                            <div class="row appointmentDetailHeader"><i class="material-icons">person</i>  PATIENT </div>
+                                            <h6> {{x.patient.firstName}}</h6>
+                                            <h6> <i class="material-icons">phone</i> {{x.patient.phone}}</h6>
+                                        </div>
+                                        
                                     </div>
                                     
-                                </div>
-                                
-                        </div>
+                            </div>
+                          </div>
+        
                       </div>
-    
-                  </div>
-                  </div>
-           
+                      </div>
+               
+            </div>
         </div>
+
+
+
+
     </div>
+    <div class="mdl-tabs__panel" id="lannisters-panel">
+      <ul>
+        <li>Tywin</li>
+        <li>Cersei</li>
+        <li>Jamie</li>
+        <li>Tyrion</li>
+      </ul>
+    </div>
+    <div class="mdl-tabs__panel" id="targaryens-panel">
+      <ul>
+        <li>Viserys</li>
+        <li>Daenerys</li>
+      </ul>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     
 
 </div>
