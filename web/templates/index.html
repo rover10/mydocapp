@@ -413,32 +413,27 @@
                                             </div-->
                                             <div class="col">
                                                 <div class="row appointmentDetailHeader"><i class="material-icons">insert_invitation</i>  &nbsp; APPOINTMENT DATE   </div>
-                                                <div class="row"><h6>{{x.slotDateTime | date}}</h6>  </div>
+                                                <div class="row"><h6>&nbsp; {{x.slotDateTime | date}}</h6>  </div>
                                             </div>
                                             <div class="col">
-                                                <div class="row appointmentDetailHeader">CANCELLATION   </div>
-                                                <div class="row appointmentDetailData"><h6>{{x.cancelled}}</h6>   </div>
-                                            </div>
-                                    
-                                            <div class="col">
-                                                <div class="row appointmentDetailHeader"> BOOKING DATE </div>
-                                                <div class="row appointmentDetailData"><h6>{{x.createdOn  | date }}  </h6></div>
+                                                <div class="row appointmentDetailHeader"><i class="material-icons">insert_invitation</i>  &nbsp;  BOOKING DATE </div>
+                                                <div class="row appointmentDetailData"><h6>&nbsp; {{x.createdOn  | date }}  </h6></div>
                                             </div>
                                         </div> 
                                         <div class="col-md-4">
                                             <div class="row appointmentDetailHeader"> <i class="material-icons">business</i> &nbsp; CLINIC / HOSPITAL  </div>
                                             <h6><b> 
                                                 {{x.clinic.name}},</b> {{x.clinic.address}} </h6>
-                                            <h6> <i class="material-icons">phone</i> git{{x.clinic.phone}}</h6>
+                                            <h6> <i class="material-icons">phone</i> &nbsp; {{x.clinic.phone}}</h6>
                                             <div class="">
                                                 <img ng-src="{{x.qrcode}}">
                                             </div>
                                         </div>
     
                                         <div class="col-md-4">
-                                            <div class="row appointmentDetailHeader"><i class="material-icons">person</i>  PATIENT </div>
-                                            <h6> {{x.patient.firstName}}</h6>
-                                            <h6> <i class="material-icons">phone</i> {{x.patient.phone}}</h6>
+                                            <div class="row appointmentDetailHeader"><i class="material-icons">person</i>  &nbsp; PATIENT </div>
+                                            <h6> {{x.patient.firstName}} {{x.patient.lastName}} </h6>
+                                            <h6> <i class="material-icons">phone</i> &nbsp;  {{x.patient.phone}}</h6>
                                         </div>
                                         
                                     </div>
