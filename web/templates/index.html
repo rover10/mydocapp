@@ -372,34 +372,37 @@
         <div>
             <div ng-repeat = "x in myappointments" class="accordion" id="accordionExample">
                     <div class="card">
-                      <div class="card-header" id="headingOne">
+                      <div class="card-header row" id="headingOne">
                         
-                        
-                       
-                      
-                            <div class="btn-group btn-group-sm row" role="group" aria-label="Button group with nested dropdown">
-                                <div class="btn-group btn-group-sm" role="group">
-                                  <button id="btnGroupDrop{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="material-icons">more_vert</i>
-                                  </button>
-                                  <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{$index}}">
-                                    <a class="dropdown-item" href="#cancelApp{{$index}}">Cancel</a>
-                                    <a class="dropdown-item" href="#reschedule{{$index}}">Re-schedule</a>
-                                  </div>
-                                </div>
-                                <div class="float-right">
-                                    <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointment{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
-                                        <i class="material-icons">expand_more</i>
-                                        <strong>Appointment {{$index+1}} </strong>  {{x.slotDateTime | date}}
-                                    </button>
+                            <div class="col-md-4 d-flex" role="group" aria-label="Button group with nested dropdown">
+                                <div class = "">
+                                    <div class="float-right">
+                                        <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointment{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
+                                            <i class="material-icons">expand_more</i>
+                                            <strong>Appointment {{$index+1}} </strong>  {{x.slotDateTime | date}}
+                                        </button>
+                                    </div>
                                 </div>
                               </div>
-                     
+                            <div class="col-md-7">&nbsp;</div>
                              
+                              <div class = "col-md-1">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button id="btnGroupDrop{{$index}}" type="button" class="btn btn-secondary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      <i class="material-icons">more_vert</i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{$index}}">
+                                      <a class="dropdown-item" href="#cancelApp{{$index}}">Cancel</a>
+                                      <a class="dropdown-item" href="#reschedule{{$index}}">Re-schedule</a>
+                                    </div>
+                                  </div>
+                            </div>
     
+                      </div>  
+
                         <div id="appointment{{$index}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                            <div class="card-body">            
-                                    <div class="row">
+                            <div class="card-body row">            
+                                   
                                         <!--div class="col-md-2">
                                             <img ng-src="{{x.qrcode}}">
                                         </div-->
@@ -433,14 +436,13 @@
                                             <h6> <i class="material-icons">phone</i> &nbsp;  {{x.patient.phone}}</h6>
                                         </div>
                                         
-                                    </div>
+                                    
                                     
                             </div>
                           </div>
         
                       </div>
-                      </div>
-               
+                 
             </div>
         </div>
 
@@ -515,16 +517,10 @@
 
     </div>
     <div class="mdl-tabs__panel" id="targaryens-panel">
-     
-        
         <div>
             <div ng-repeat = "x in mycancelappointments" class="accordion" id="mycancelappointments2">
                     <div class="card">
                       <div class="card-header" id="headingOne2">
-                        
-                        
-                       
-                      
                             <div class="btn-group btn-group-sm row" role="group" aria-label="Button group with nested dropdown">
                                 <div class="float-right">
                                     <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointmentCancel{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
@@ -533,9 +529,6 @@
                                     </button>
                                 </div>
                               </div>
-                     
-                             
-    
                         <div id="appointmentCancel{{$index}}" class="collapse" aria-labelledby="headingOne2" data-parent="#mycancelappointments2">
                             <div class="card-body">            
                                     <div class="row">
