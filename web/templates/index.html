@@ -37,10 +37,11 @@
         padding: 60px;
         border-color: #e5f1e5;
         border-color: #c4ecf3;
-        box-shadow: 1px 1px 2px #bdd7db;
+        --box-shadow: 1px 1px 2px #bdd7db;
         --border-color: #bdbdbd;
         --box-shadow: 1px 2px 3px silver;
-        --background-color: #f5f5f5;
+        box-shadow: 0px 10px 25px #adadad;
+        background-color: white;
         --background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(147,230,241,1) 0%, rgba(145,192,241,1) 45.5% );
     }
     .title{
@@ -59,9 +60,9 @@
     }
 </style>
 
-<body style="background: white;"  ng-app="myApp" ng-controller="personCtrl" >
-    <div class="title ">
-        <div class="container">
+<body style="background: #f5f5f5;"  ng-app="myApp" ng-controller="personCtrl" >
+    <div class="title" style="background: #65646436 ;">
+        <div class="container" >
             <nav class="nav" style="float:left">
                 <a class="nav-link active" aria-current="page" href="#">Doctors</a>
                 <a class="nav-link" href="#">Pharmacy</a>
@@ -78,7 +79,7 @@
                         <i class="material-icons">add</i> New Appointment
                     </button>
                 </div> 
-                <a class="nav-link align-items-center"  href="#" ng-show="!loginForm" ng-click="logout();">Sign out</a>
+                <a class="nav-link align-items-center"  href="#" ng-show="!loginForm" ng-click="logout();">  <i class="material-icons">lock</i>  Log out</a>
             </nav>
 
 

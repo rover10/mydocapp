@@ -35,6 +35,8 @@ func Api(server *server.Server) {
 	server.Router.POST(path.Join(server.APIPath, "/v1/uploadqualification"), server.AddDoctorQualification)
 
 	server.Router.GET(path.Join(server.APIPath, "/v1/appointment"), server.Appointment, auth.IsLoggedIn)
+	server.Router.GET(path.Join(server.APIPath, "/v2/appointment"), server.AppointmentV2, auth.IsLoggedIn)
+
 	server.Router.GET(path.Join(server.APIPath, "/v1/patients"), server.Patient, auth.IsLoggedIn)
 	server.Router.GET(path.Join(server.APIPath, "/v1/clinics"), server.Clinic, auth.IsLoggedIn)
 	server.Router.GET(path.Join(server.APIPath, "/v1/qrcode"), server.GenerateQr, auth.IsLoggedIn)

@@ -7,8 +7,10 @@ import (
 
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/rover10/mydocapp.git/model"
+	"github.com/rover10/mydocapp.git/response"
 	"github.com/rover10/mydocapp.git/token"
 )
 
@@ -56,6 +58,39 @@ func (s *Server) Appointment(context echo.Context) error {
 	if err := s.DB.DBORM.Table("appointment").Where("account_id = ?", accountID).Find(&appointments).Error; err != nil {
 		return err
 	}
+	return context.JSON(http.StatusOK, appointments)
+	//s.DB.RetrieveAppointment(sid)
+
+}
+
+//Appointment read appointment
+func (s *Server) AppointmentV2(context echo.Context) error {
+	login := token.GetLoggedIn(context)
+	accountID := login["uid"].(string)
+	fmt.Println(accountID)
+	appointments := []response.Appointment{}
+	//.Preload("Clinic").Preload("Patient").Preload("Doctor")
+	//clinic := response.Clinic{}
+	if err := s.DB.DBORM.Debug().
+		//Preload("Clinic").
+		Table("appointment").
+		Preload("Clinic", func(db *gorm.DB) *gorm.DB {
+			return db.
+				Table("clinic") //.
+			//Joins("INNER JOIN appointment ON appointment.clinic_id = clinic.uid ").
+			//Where("clinic.uid = appointment.clinic_id")
+
+			//.
+			//Select("clinic.uid, clinic.name, clinic.address, clinic.phone, clinic.email").
+			//Joins("INNER JOIN appointment on clinic.uid = appointment.clinic_id")
+			//Where("")
+		}).
+		Where("account_id = ?", accountID).
+		Find(&appointments).Error; err != nil {
+		return err
+	}
+
+	//s.DB.DBORM.
 	return context.JSON(http.StatusOK, appointments)
 	//s.DB.RetrieveAppointment(sid)
 
