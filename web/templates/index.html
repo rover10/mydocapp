@@ -58,6 +58,23 @@
     .displayboard{
         background:white; 
     }
+
+    .appointmentDetailHeader {
+        color:#afadad;
+        font-size: medium;
+        font-weight: 800;
+    }
+
+    .appointmentDetailData {
+        padding-left: 5px;
+        color:black;
+        font-weight: 800;
+        padding-bottom: 20px;
+    }
+    
+    .demo-layout-waterfall .mdl-layout__header-row .mdl-navigation__link:last-of-type  {
+        padding-right: 0;
+    }
 </style>
 
 <body style="background: #f5f5f5;"  ng-app="myApp" ng-controller="personCtrl" >
@@ -359,39 +376,42 @@
                     <div id="appointment{{$index}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                         <div class="card-body">            
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <!--div class="col-md-2">
                                         <img ng-src="{{x.qrcode}}">
-                                    </div>
+                                    </div-->
                                     <div class="col-md-4">
-                                        <table>
-                                            <tr>
-                                                <td class = "login">Appointment no.  </td>
-                                                <td>{{x.uid | uppercase}}</td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td class = "login">On </td>
-                                                <td>{{x.slotDateTime | date}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class = "login"> Clinic </td>
-                                                <td> {{x.clinicId | uppercase}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class = "login">Cancelled </td>
-                                                <td>{{x.cancelled}} </td>
-                                            </tr>
-                                            <tr>
-                                                <td class = "login"> Booked on </td>
-                                                <td>{{x.createdOn  | date }}</td>
-                                            </tr>  
-                                            
-                                        </table>
+                                        <!--div class="col">
+                                            <div class="row appointmentDetailHeader">APPOINTMENT </div>
+                                            <div class="row appointmentDetailData"><h6>{{x.uid | uppercase}}</h6> </div>
+                                        </div-->
+                                        <div class="col">
+                                            <div class="row appointmentDetailHeader"><i class="material-icons">insert_invitation</i>  &nbsp; APPOINTMENT DATE   </div>
+                                            <div class="row"><h6>{{x.slotDateTime | date}}</h6>  </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="row appointmentDetailHeader">CANCELLATION   </div>
+                                            <div class="row appointmentDetailData"><h6>{{x.cancelled}}</h6>   </div>
+                                        </div>
+                                
+                                        <div class="col">
+                                            <div class="row appointmentDetailHeader"> BOOKING DATE </div>
+                                            <div class="row appointmentDetailData"><h6>{{x.createdOn  | date }}  </h6></div>
+                                        </div>
                                     </div> 
                                     <div class="col-md-4">
-                                        <h6>{{x.clinic.name}}</h6>
-                                        <h6>{{x.clinic.address}}</h6>
-                                        <h6>{{x.clinic.phone}}</h6>
+                                        <div class="row appointmentDetailHeader"> <i class="material-icons">business</i> &nbsp; CLINIC / HOSPITAL  </div>
+                                        <h6><b> 
+                                            {{x.clinic.name}},</b> {{x.clinic.address}} </h6>
+                                        <h6> <i class="material-icons">phone</i>  Contact - {{x.clinic.phone}}</h6>
+                                        <div class="">
+                                            <img ng-src="{{x.qrcode}}">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="row appointmentDetailHeader"><i class="material-icons">person</i>  PATIENT </div>
+                                        <h6> {{x.patient.firstName}}</h6>
+                                        <h6> <i class="material-icons">phone</i> {{x.patient.phone}}</h6>
                                     </div>
                                     
                                 </div>
@@ -455,7 +475,7 @@ app.controller('personCtrl', function($scope, $http) {
         'Content-Type': 'application/json'
         }
     }; 
-        $http.get("v1/appointment", config).then(function(response) {
+        $http.get("v2/appointment", config).then(function(response) {
             // success
             console.log(response);
             $scope.myappointments = response.data;
@@ -585,7 +605,7 @@ app.controller('personCtrl', function($scope, $http) {
         }
 
         $http({
-            url: "/v2/appointment", 
+            url: "/v1/appointment", 
             method: "POST",
             data: data,
             headers:  {
