@@ -366,13 +366,10 @@
     </div>
   
     <div class="mdl-tabs__panel is-active" id="starks-panel">
-      
-
-
         <div>
             <div ng-repeat = "x in myappointments" class="accordion" id="accordionExample">
                     <div class="card">
-                      <div class="card-header row" id="headingOne">
+                      <div class="card-header row" id="headingOne"  style="background: #f3f3f3;">
                         
                             <div class="col-md-4 d-flex" role="group" aria-label="Button group with nested dropdown">
                                 <div class = "">
@@ -401,7 +398,7 @@
                       </div>  
 
                         <div id="appointment{{$index}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                            <div class="card-body row">            
+                            <div class="card-body row" >            
                                    
                                         <!--div class="col-md-2">
                                             <img ng-src="{{x.qrcode}}">
@@ -455,18 +452,17 @@
         <div>
             <div ng-repeat = "x in myvisitedappointments" class="accordion" id="myvisitedappointments3">
                     <div class="card">
-                      <div class="card-header" id="headingOne3">
-                            <div class="btn-group btn-group-sm row" role="group" aria-label="Button group with nested dropdown">
-                                
+                      <div class="card-header row" id="headingOne3"  style="background: #f3f3f3;">
+                          
                                 <div class="float-right">
                                     <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointmentVis{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
                                         <i class="material-icons">expand_more</i>
                                         <strong>Appointment {{$index+1}} </strong>  {{x.slotDateTime | date}}
                                     </button>
                                 </div>
-                              </div>
+                          
                      
-                             
+                      </div>     
     
                         <div id="appointmentVis{{$index}}" class="collapse" aria-labelledby="headingOne3" data-parent="#myvisitedappointments3">
                             <div class="card-body">            
@@ -509,7 +505,7 @@
                             </div>
                           </div>
         
-                      </div>
+                     
                       </div>
                
             </div>
@@ -520,18 +516,18 @@
         <div>
             <div ng-repeat = "x in mycancelappointments" class="accordion" id="mycancelappointments2">
                     <div class="card">
-                      <div class="card-header" id="headingOne2">
-                            <div class="btn-group btn-group-sm row" role="group" aria-label="Button group with nested dropdown">
+                      <div class="card-header row" id="headingOne2"  style="background: #f3f3f3;">
+                          
                                 <div class="float-right">
                                     <button ng-click="getQrCode(x.uid)" class="btn btn-link text-left" type="button" data-toggle="collapse" data-target="#appointmentCancel{{$index}}" aria-expanded="true" aria-controls="collapseOne" style = "float:left">
                                         <i class="material-icons">expand_more</i>
                                         <strong>Appointment {{$index+1}} </strong>  {{x.slotDateTime | date}}
                                     </button>
                                 </div>
-                              </div>
+                      </div>    
                         <div id="appointmentCancel{{$index}}" class="collapse" aria-labelledby="headingOne2" data-parent="#mycancelappointments2">
-                            <div class="card-body">            
-                                    <div class="row">
+                            <div class="card-body row">            
+                                  
                                         <!--div class="col-md-2">
                                             <img ng-src="{{x.qrcode}}">
                                         </div-->
@@ -565,12 +561,12 @@
                                             <h6> <i class="material-icons">phone</i> &nbsp;  {{x.patient.phone}}</h6>
                                         </div>
                                         
-                                    </div>
+                                    
                                     
                             </div>
                           </div>
         
-                      </div>
+                     
                       </div>
                
             </div>
