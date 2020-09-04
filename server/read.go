@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"image/png"
+	"log"
 	"net/http"
 	"strings"
 
@@ -22,6 +23,7 @@ func Doctor(context echo.Context) error {
 
 //Clinic read a clinic detail
 func (s *Server) Clinic(context echo.Context) error {
+	log.Println("Clinic")
 	clinics := []model.Clinic{}
 	if err := s.DB.DBORM.Table("clinic").Find(&clinics).Error; err != nil {
 		return err
@@ -33,6 +35,7 @@ func (s *Server) Clinic(context echo.Context) error {
 func (s *Server) GenerateQr(context echo.Context) error {
 	//login := token.GetLoggedIn(context)
 	//accountID := login["uid"].(string)
+	log.Println("GenerateQr")
 	if appointmentID := context.QueryParam("appointmentId"); appointmentID != "" {
 		fmt.Println(appointmentID)
 		qrCode, _ := GenerateQrCode(appointmentID, 128, 128)
@@ -52,6 +55,7 @@ func GenerateQrCode(data string, l int, w int) (barcode.Barcode, error) {
 
 //Appointment read appointment
 func (s *Server) Appointment(context echo.Context) error {
+	log.Println("Appointment")
 	login := token.GetLoggedIn(context)
 	accountID := login["uid"].(string)
 	fmt.Println(accountID)
@@ -66,6 +70,7 @@ func (s *Server) Appointment(context echo.Context) error {
 
 //Appointment read appointment
 func (s *Server) AppointmentV2(context echo.Context) error {
+	log.Println("AppointmentV2")
 	login := token.GetLoggedIn(context)
 	accountID := login["uid"].(string)
 	fmt.Println(accountID)
@@ -124,6 +129,8 @@ func (s *Server) AppointmentV2(context echo.Context) error {
 
 //Patient read linked patient
 func (s *Server) Patient(context echo.Context) error {
+
+	log.Println("Patient")
 	login := token.GetLoggedIn(context)
 	accountID := login["uid"].(string)
 	patients := []model.Patient{}

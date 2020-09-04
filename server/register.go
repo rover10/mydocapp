@@ -354,6 +354,7 @@ func (s *Server) RegisterStaff(context echo.Context) error {
 
 //BookAppointment book a new appointment for consultation
 func (s *Server) BookAppointment(context echo.Context) error {
+	log.Println("BookAppointment")
 	body, err := parseutil.ParseJSON(context)
 	if err != nil {
 		log.Printf("\nError: %+v", err)
@@ -743,6 +744,7 @@ func (s *Server) AddDoctorQualification(context echo.Context) error {
 }
 
 func (s *Server) Login(context echo.Context) error {
+	log.Println("Login")
 	body, err := parseutil.ParseJSON(context)
 	if err != nil {
 		log.Printf("\nError: %+v", err)

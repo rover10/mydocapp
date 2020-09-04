@@ -36,6 +36,7 @@ func Api(server *server.Server) {
 
 	server.Router.GET(path.Join(server.APIPath, "/v1/appointment"), server.Appointment, auth.IsLoggedIn)
 	server.Router.GET(path.Join(server.APIPath, "/v2/appointment"), server.AppointmentV2, auth.IsLoggedIn)
+	server.Router.PUT(path.Join(server.APIPath, "/v1/appointment/:uid"), server.UpdateAppointment, auth.IsLoggedIn)
 
 	server.Router.GET(path.Join(server.APIPath, "/v1/patients"), server.Patient, auth.IsLoggedIn)
 	server.Router.GET(path.Join(server.APIPath, "/v1/clinics"), server.Clinic, auth.IsLoggedIn)
