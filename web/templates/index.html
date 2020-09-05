@@ -344,6 +344,39 @@
     </div>
 <!---->
 
+
+
+
+<!---->
+<div class="modal fade" id="openUpdateModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Re-schedule</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="updatedAppointmentDateTime">Appointment date</label>
+                            <input id="updatedAppointmentDateTime" class="form-control" ng-model = "updatedAppointmentDateTime"  value="2011-08-19T13:45:00" type="datetime-local">   
+                          </div>      
+                    </div>
+                </form>
+        </div>
+        <div class="modal-footer">
+            <Button class="btn btn-primary" ng-model="newusersubmit" ng-click="updateAppointmentTime();">Re-schedule</Button>
+        </div>
+        </div>
+    </div>
+    </div>
+<!---->
+
+
+
 <div class="New user" ng-show="newappointment.showForm">
     
 </div>
@@ -390,7 +423,7 @@
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{$index}}">
                                       <a class="dropdown-item" href="#cancelApp{{$index}}" ng-click="cancelAppointment($index, x.uid)">Cancel</a>
-                                      <a class="dropdown-item" href="#reschedule{{$index}}">Re-schedule</a>
+                                      <a class="dropdown-item" href="#reschedule{{$index}}" ng-click="openUpdateModel($index, x.uid)"  data-toggle="modal" data-target="#openUpdateModel" data-whatever="@getbootstrap">Re-schedule</a>
                                     </div>
                                   </div>
                             </div>
@@ -775,6 +808,7 @@ app.controller('personCtrl', function($scope, $http) {
     $scope.newappointment.diseaseId = 1
     $scope.newappointment.showForm = false;
 
+    
     $scope.bookAppointment = function () {
        // console.log(config)
         var data = {
@@ -805,14 +839,27 @@ app.controller('personCtrl', function($scope, $http) {
         });;
     }
 
-    $scope.updateAppointmentTime = function (i, appointmentId, slotDateTime) {
-       // console.log(config)
+    $scope.updatedAppointmentDateTime = "";
+    $scope.updatedAppointmentId = "";
+    $scope.updatedAppointmentObject = -1;
+
+
+    $scope.openUpdateModel = function(i, appointmentId) {
+        $scope.updatedAppointmentId = appointmentId;
+        console.log("---->")
+        console.log(appointmentId)
+        $scope.updatedAppointmentObject = i;
+        
+    }
+
+    $scope.updateAppointmentTime = function () {
+        // console.log(config)
         var data = {
-            "slotDateTime":slotDateTime
+            "slotDateTime":$scope.updatedAppointmentDateTime
         }
 
         $http({
-            url: "/v1/appointment/" + appointmentId, 
+            url: "/v1/appointment/" + $scope.updatedAppointmentId, 
             method: "PUT",
             data: data,
             headers:  {
@@ -821,12 +868,12 @@ app.controller('personCtrl', function($scope, $http) {
                 }
             }).then(function(response) {
             
-            $scope.myappointments[i] = response.data;
+            $scope.myappointments[$scope.updatedAppointmentObject] = response.data;
         }, 
         function(response) { // optional
                 // failed
                 console.log("Appointment update Failed")
-        });;
+        });
     }
     //
     $scope.cancelAppointment = function (i, appointmentId) {
