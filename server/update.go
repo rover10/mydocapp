@@ -87,7 +87,6 @@ func (s *Server) UpdateAppointment(context echo.Context) error {
 		t, err := time.Parse(time.RFC3339, strDate)
 
 		if err != nil {
-			fmt.Println("====>")
 			return context.JSON(http.StatusInternalServerError, err)
 		}
 		if t.Sub(time.Now()) < 0 {
@@ -96,11 +95,12 @@ func (s *Server) UpdateAppointment(context echo.Context) error {
 
 	}
 
-	query = query + fmt.Sprintf(" WHERE uid = $%d ", len(values)+1)
+	query = query + fmt.Sprintf(" WHERE uid = $%d AND account_id = $%d", len(values)+1, len(values)+2)
 	query = query + " RETURNING uid, account_id, clinic_id, patient_id, disease_id, slot_date_time, contact_phone, no_show, created_on, cancelled"
 	fmt.Println(query)
 
 	values = append(values, context.Param("uid"))
+	values = append(values, accountID)
 	// Execute query
 	tx := s.DB.DBORM.Begin()
 	if tx.Error != nil {
