@@ -844,8 +844,7 @@ app.controller('personCtrl', function($scope, $http) {
                 'Content-Type': 'application/json'
                 }
             }).then(function(response) {
-            
-            $scope.myappointments[i] = response.data;
+              $scope.myappointments.splice(i,1);
         }, 
         function(response) { // optional
                 // failed
