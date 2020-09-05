@@ -114,7 +114,7 @@ func (s *Server) AppointmentV2(context echo.Context) error {
 	} else if history {
 		ret = ret.Where("account_id = ? AND slot_date_time < now()", accountID)
 	} else {
-		ret = ret.Where("account_id = ? AND slot_date_time > now()", accountID)
+		ret = ret.Where("account_id = ? AND slot_date_time > now() and cancelled = 'False'", accountID)
 	}
 
 	if err := ret.Find(&appointments).Error; err != nil {

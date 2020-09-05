@@ -389,7 +389,7 @@
                                       <i class="material-icons">more_vert</i>
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{$index}}">
-                                      <a class="dropdown-item" href="#cancelApp{{$index}}">Cancel</a>
+                                      <a class="dropdown-item" href="#cancelApp{{$index}}" ng-click="cancelAppointment($index, x.uid)">Cancel</a>
                                       <a class="dropdown-item" href="#reschedule{{$index}}">Re-schedule</a>
                                     </div>
                                   </div>
@@ -804,6 +804,56 @@ app.controller('personCtrl', function($scope, $http) {
                 console.log("Failed")
         });;
     }
+
+    $scope.updateAppointmentTime = function (i, appointmentId, slotDateTime) {
+       // console.log(config)
+        var data = {
+            "slotDateTime":slotDateTime
+        }
+
+        $http({
+            url: "/v1/appointment/" + appointmentId, 
+            method: "PUT",
+            data: data,
+            headers:  {
+                'Authorization': 'Bearer ' + $scope.loginToken,
+                'Content-Type': 'application/json'
+                }
+            }).then(function(response) {
+            
+            $scope.myappointments[i] = response.data;
+        }, 
+        function(response) { // optional
+                // failed
+                console.log("Appointment update Failed")
+        });;
+    }
+    //
+    $scope.cancelAppointment = function (i, appointmentId) {
+       // console.log(config)
+        var data = {
+            "cancelled":true
+        }
+
+        $http({
+            url: "/v1/appointment/" + appointmentId, 
+            method: "PUT",
+            data: data,
+            headers:  {
+                'Authorization': 'Bearer ' + $scope.loginToken,
+                'Content-Type': 'application/json'
+                }
+            }).then(function(response) {
+            
+            $scope.myappointments[i] = response.data;
+        }, 
+        function(response) { // optional
+                // failed
+                console.log("Appointment update Failed")
+        });;
+    }
+    // /v1/appointment/:uid
+
 
     $scope.qcode = ""
     $scope.getQrCode = function (appointmentId) {

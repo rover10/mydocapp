@@ -76,9 +76,7 @@ func (s *Server) UpdateAppointment(context echo.Context) error {
 	// Send to query builder BuildQuery(table string, model map[string]interface{}, returnfields []string)
 	// query, values := querybuilder.BuildInsertQuery(body, "appointment")
 	// Camel case can be utilize of RETURNING colum names are supposed to be user instead of table
-	fmt.Println("-->")
 	fmt.Println(body)
-	fmt.Println("-->")
 	query, values := querybuilder.BuildUpdateQuery(body, "appointment")
 	// validation
 	if body["slotDateTime"] != nil {
