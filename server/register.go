@@ -386,6 +386,16 @@ func (s *Server) BookAppointment(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, invalidType)
 	}
 
+	// Ensure booking is done in future date only
+	strDate := body["slotDateTime"].(string)
+	t, err := time.Parse(time.RFC3339, strDate)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err)
+	}
+	if t.Sub(time.Now()) < 0 {
+		return context.JSON(http.StatusInternalServerError, errors.New("Future time is needed"))
+	}
+
 	// Send to query builder BuildQuery(table string, model map[string]interface{}, returnfields []string)
 	query, values := querybuilder.BuildInsertQuery(body, "appointment")
 	// Camel case can be utilize of RETURNING colum names are supposed to be user instead of table
