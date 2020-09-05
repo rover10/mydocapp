@@ -13,6 +13,7 @@ import (
 	"github.com/rover10/mydocapp.git/model"
 	"github.com/rover10/mydocapp.git/parseutil"
 	"github.com/rover10/mydocapp.git/querybuilder"
+	"github.com/rover10/mydocapp.git/service"
 	"github.com/rover10/mydocapp.git/token"
 )
 
@@ -42,6 +43,7 @@ func (s *Server) RegisterUser(context echo.Context) error {
 	stringFields := []string{"firstName", "password", "lastName", "phone", "email"}
 	intFields := []string{"userType", "genderId", "countryId"}
 	user := model.User{}
+	body2 := body
 	body, invalidType := parseutil.MapX(body, user, stringFields, nil, intFields, nil, nil)
 	if len(invalidType) != 0 {
 		log.Println("invalidType", invalidType)
@@ -78,6 +80,20 @@ func (s *Server) RegisterUser(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 	fmt.Println("-->3")
+
+	// service register the user as a patient as well
+	if body2["age"] == nil {
+		body2["age"] = 1
+	}
+
+	body2["firstName"] = "Self"
+	body2["accountId"] = user.UID.String()
+	fmt.Println("Register as patient -->")
+	err = service.RegisterPatient(tx, body2)
+	if err != nil {
+		tx.Rollback()
+		return context.JSON(http.StatusInternalServerError, tx.Error)
+	}
 	tx.Commit()
 	if tx.Error != nil {
 		fmt.Println(tx.Error)
