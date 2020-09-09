@@ -14,6 +14,7 @@ func Api(server *server.Server) {
 	server.Router.Use(middleware.CORS())
 	// https://ednsquare.com/story/jwt-authentication-in-golang-with-echo------T2hTPm
 	h := &auth.Handler{}
+	server.Router.GET(path.Join(server.APIPath, "/islogin"), server.Ping, auth.IsLoggedIn)
 	server.Router.POST("/login", server.Login)
 	server.Router.GET("/is-loggedin", h.Private, auth.IsLoggedIn)
 	server.Router.GET("/is-admin", h.Private, auth.IsLoggedIn, auth.IsAdmin)

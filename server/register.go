@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+
 	"github.com/labstack/echo"
 	"github.com/rover10/mydocapp.git/model"
 	"github.com/rover10/mydocapp.git/parseutil"
@@ -79,16 +80,13 @@ func (s *Server) RegisterUser(context echo.Context) error {
 		fmt.Println(tx.Error)
 		return context.JSON(http.StatusInternalServerError, err)
 	}
-	fmt.Println("-->3")
 
 	// service register the user as a patient as well
 	if body2["age"] == nil {
 		body2["age"] = 1
 	}
-
 	body2["firstName"] = "Self"
 	body2["accountId"] = user.UID.String()
-	fmt.Println("Register as patient -->")
 	err = service.RegisterPatient(tx, body2)
 	if err != nil {
 		tx.Rollback()
@@ -828,6 +826,22 @@ func (s *Server) Login(context echo.Context) error {
 				"token":         t,
 				"refresh_token": rt,
 			})
+
+			//
+			// sess, _ := session.Get("session", context.)
+			// sess.Options = &sessions.Options{
+			// 	Path:     "/",
+			// 	MaxAge:   86400 * 7,
+			// 	HttpOnly: true,
+			// }
+			// sess.Values["foo"] = "bar"
+			// sess.Save(context.Request(), context.Response())
+			//cook := context.Cookies()
+			co := http.Cookie{Name: "foo", Value: "Bar", Path: "/", MaxAge: 86400 * 7, HttpOnly: true}
+			//cook = append(cook, &co)
+			context.SetCookie(&co)
+
+			//return c.NoContent(http.StatusOK)
 		}
 	}
 

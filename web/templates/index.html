@@ -633,6 +633,8 @@
 <script>
 var app = angular.module('myApp', []);
 app.controller('personCtrl', function($scope, $http) {
+    console.log( sessionStorage.loginToken );
+
     $scope.userName = "rakesh.kumar@gmail.com";
     $scope.password = "kumar";
     $scope.loginToken = "";
@@ -642,6 +644,26 @@ app.controller('personCtrl', function($scope, $http) {
     $scope.patients = [];
     $scope.loginForm = true;
     $scope.registerlink = true;
+   
+    $scope.sessionValid = function(){
+        var config = {headers:  {
+            'Authorization': 'Bearer ' + $scope.loginToken,
+            'Content-Type': 'application/json'
+        }}; 
+        $http.get("islogin", config).then(function(response) {
+                    $scope.loginForm = false;
+                    $scope.registerlink = false;
+            }, 
+            function(response) { // optional
+                    console.log("Failed")
+            });
+    }
+   
+    if (sessionStorage.loginToken != undefined) {
+        $scope.loginToken = sessionStorage.loginToken;
+        $scope.sessionValid();
+    }
+
     $scope.login = function() {
             $http({
                 url: 'login',
@@ -657,6 +679,7 @@ app.controller('personCtrl', function($scope, $http) {
                     $scope.password = "";
                     $scope.loginForm = false;
                     $scope.registerlink = false;
+                    sessionStorage.loginToken = $scope.loginToken;
             }, 
             function(response) { // optional
                     // failed
@@ -669,16 +692,17 @@ app.controller('personCtrl', function($scope, $http) {
         $scope.myappointments = [];
         $scope.loginForm = true;
         $scope.registerlink = true;
+        sessionStorage.loginToken = undefined;
     }
 
     $scope.appointments = function (isCancelled, history) {
         console.log(config)
         var config = {headers:  {
-        'Authorization': 'Bearer ' + $scope.loginToken,
-        'Content-Type': 'application/json'
+            'Authorization': 'Bearer ' + $scope.loginToken,
+            'Content-Type': 'application/json'
         },
         params:{'isCancelled': isCancelled, 'history':history},
-    }; 
+        }; 
         $http.get("v2/appointment", config).then(function(response) {
             // success
             console.log(response);
