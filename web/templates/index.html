@@ -5,8 +5,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <!--script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script -->
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>   
-
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>   
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-cookies.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
@@ -631,8 +631,8 @@
 </div>
 
 <script>
-var app = angular.module('myApp', []);
-app.controller('personCtrl', function($scope, $http) {
+var app = angular.module('myApp', ['ngCookies']);
+app.controller('personCtrl',  function($scope, $http, $cookies) {
     console.log( sessionStorage.loginToken );
 
     $scope.userName = "rakesh.kumar@gmail.com";
@@ -662,6 +662,9 @@ app.controller('personCtrl', function($scope, $http) {
     if (sessionStorage.loginToken != undefined) {
         $scope.loginToken = sessionStorage.loginToken;
         $scope.sessionValid();
+    } else if ($cookies.get('loginToken') != undefined){
+        $scope.loginToken = $cookies.get('loginToken');
+        $scope.sessionValid();
     }
 
     $scope.login = function() {
@@ -680,6 +683,7 @@ app.controller('personCtrl', function($scope, $http) {
                     $scope.loginForm = false;
                     $scope.registerlink = false;
                     sessionStorage.loginToken = $scope.loginToken;
+                    $cookies.put('loginToken', $scope.loginToken);
             }, 
             function(response) { // optional
                     // failed
@@ -693,6 +697,7 @@ app.controller('personCtrl', function($scope, $http) {
         $scope.loginForm = true;
         $scope.registerlink = true;
         sessionStorage.loginToken = undefined;
+        $cookies.put("loginToken", undefined);
     }
 
     $scope.appointments = function (isCancelled, history) {
