@@ -633,7 +633,7 @@
 <script>
 var app = angular.module('myApp', ['ngCookies']);
 app.controller('personCtrl',  function($scope, $http, $cookies) {
-    console.log( sessionStorage.loginToken );
+    //console.log( sessionStorage.loginToken );
 
     $scope.userName = "rakesh.kumar@gmail.com";
     $scope.password = "kumar";
@@ -659,10 +659,11 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
             });
     }
    
-    if (sessionStorage.loginToken != undefined) {
-        $scope.loginToken = sessionStorage.loginToken;
-        $scope.sessionValid();
-    } else if ($cookies.get('loginToken') != undefined){
+   // if (sessionStorage.loginToken != undefined) {
+       // $scope.loginToken = sessionStorage.loginToken;
+       // $scope.sessionValid();
+    //} else 
+    if ($cookies.get('loginToken') != undefined){
         $scope.loginToken = $cookies.get('loginToken');
         $scope.sessionValid();
     }
@@ -682,7 +683,7 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
                     $scope.password = "";
                     $scope.loginForm = false;
                     $scope.registerlink = false;
-                    sessionStorage.loginToken = $scope.loginToken;
+                   // sessionStorage.loginToken = $scope.loginToken;
                     $cookies.put('loginToken', $scope.loginToken);
             }, 
             function(response) { // optional
@@ -696,7 +697,7 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
         $scope.myappointments = [];
         $scope.loginForm = true;
         $scope.registerlink = true;
-        sessionStorage.loginToken = undefined;
+        //sessionStorage.loginToken = undefined;
         $cookies.put("loginToken", undefined);
     }
 
