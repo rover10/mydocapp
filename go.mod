@@ -3,6 +3,7 @@ module github.com/rover10/mydocapp.git
 go 1.14
 
 require (
+	github.com/blevesearch/bleve v1.0.10
 	github.com/boombuler/barcode v1.0.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fatih/structs v1.1.0

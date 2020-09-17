@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/blevesearch/bleve"
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
 	"github.com/jinzhu/gorm"
@@ -143,4 +144,85 @@ func (s *Server) Patient(context echo.Context) error {
 //Treatment read treatment detail which includes patient_problem_description, prescription, test
 func Treatment(context echo.Context) error {
 	return nil
+}
+
+//
+func (s *Server) Search(context echo.Context) error {
+	//search()
+	// open a new index
+	index := s.Index
+
+	data := struct {
+		Name        string `json:"name"`
+		Description string `json:"description"`
+	}{
+		Name:        "your_data you This us your data",
+		Description: "I have something to search",
+	}
+
+	//index.
+	// index some data
+	err := index.Index("id1", data)
+
+	data.Name = "Do you have something to search is something?"
+	data.Description = "Do you have something to search is something?"
+	err = index.Index("id2", data)
+	data.Name = "Do you need something"
+	data.Description = "What is something you want to search?"
+	err = index.Index("id3", data)
+
+	// search for some text
+	query := bleve.NewFuzzyQuery("you") //bleve.NewMatchQuery("you")
+	query.SetFuzziness(2)
+	//query.SetField("name")
+
+	//query := bleve.NewWildcardQuery("something")
+	// sr := make([]string, 0)
+	// sr = append(sr, "have")
+	// sr = append(sr, "something")
+
+	//query2 := bleve.NewPhraseQuery(sr, "Name")
+	fmt.Println(query)
+	//query.SetFuzziness(3)
+	//bleve.NewPhraseQuery("you")
+	//index.
+	search := bleve.NewSearchRequest(query)
+	searchResults, err := index.Search(search)
+	//index.Se
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, err)
+	}
+	fmt.Println("--------> --> --> ")
+	fmt.Println(searchResults)
+	context.JSON(http.StatusOK, searchResults)
+
+	return nil
+}
+
+func search() {
+	mapping := bleve.NewIndexMapping()
+	index, err := bleve.New("example.bleve", mapping)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	data := struct {
+		Name string
+	}{
+		Name: "text",
+	}
+
+	// index some data
+	index.Index("id", data)
+
+	// search for some text
+	query := bleve.NewMatchQuery("text")
+	search := bleve.NewSearchRequest(query)
+	searchResults, err := index.Search(search)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(searchResults)
 }

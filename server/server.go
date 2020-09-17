@@ -8,6 +8,7 @@ import (
 	"path"
 	"text/template"
 
+	"github.com/blevesearch/bleve"
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
 	"github.com/rover10/mydocapp.git/config"
@@ -20,6 +21,7 @@ type Server struct {
 	Templates       *template.Template
 	DB              *database.DocDB
 	SECRET_PASSWORD string
+	Index           bleve.Index
 }
 
 var SECRET_PASSWORD = "Ra@@ndom&%#@%(%5*&%^&Value(&*HJGJGJggHHJKJBJ"
@@ -65,12 +67,19 @@ func Templates(webDir string) *template.Template {
 
 // NewServer - Constructor function for server
 func NewServer(cfg config.Config) *Server {
+	mapping := bleve.NewIndexMapping()
+	index, err := bleve.New("example2.bleve", mapping)
+	if err != nil {
+		log.Error("Error creating index")
+	}
+
 	server := &Server{
 		Config:          cfg,
 		Router:          echo.New(),
 		Templates:       Templates("web"),
 		DB:              nil,
 		SECRET_PASSWORD: "Ra@@ndom&%#@%(%5*&%^&Value(&*HJGJGJggHHJKJBJ",
+		Index:           index,
 	}
 	return server
 }
