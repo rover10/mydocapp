@@ -67,11 +67,11 @@ func Templates(webDir string) *template.Template {
 
 // NewServer - Constructor function for server
 func NewServer(cfg config.Config) *Server {
-	mapping := bleve.NewIndexMapping()
-	index, err := bleve.New("example2.bleve", mapping)
-	if err != nil {
-		log.Error("Error creating index")
-	}
+	//mapping := bleve.NewIndexMapping()
+	// index, err := bleve.New("example2.bleve", mapping)
+	// if err != nil {
+	// 	log.Error("Error creating index")
+	// }
 
 	server := &Server{
 		Config:          cfg,
@@ -79,7 +79,7 @@ func NewServer(cfg config.Config) *Server {
 		Templates:       Templates("web"),
 		DB:              nil,
 		SECRET_PASSWORD: "Ra@@ndom&%#@%(%5*&%^&Value(&*HJGJGJggHHJKJBJ",
-		Index:           index,
+		Index:           nil,
 	}
 	return server
 }
