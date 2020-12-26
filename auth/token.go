@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/rover10/mydocapp.git/server"
+	"github.com/rover10/mydocapp/server"
 )
 
 func GenerateTokenPair(name string, uid string, email string) (map[string]string, error) {

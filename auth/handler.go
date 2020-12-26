@@ -6,7 +6,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
-	"github.com/rover10/mydocapp.git/server"
+	"github.com/rover10/mydocapp/server"
 )
 
 type Handler struct{}

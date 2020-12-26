@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
-	"github.com/rover10/mydocapp.git/model"
+	"github.com/rover10/mydocapp/model"
 )
 
 type DocDB struct {

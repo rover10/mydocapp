@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/rover10/mydocapp.git/model"
+	"github.com/rover10/mydocapp/model"
 )
 
 //BuildInsertQuery build a insert query

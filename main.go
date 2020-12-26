@@ -7,10 +7,10 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
-	"github.com/rover10/mydocapp.git/api"
-	"github.com/rover10/mydocapp.git/config"
-	"github.com/rover10/mydocapp.git/database"
-	"github.com/rover10/mydocapp.git/server"
+	"github.com/rover10/mydocapp/api"
+	"github.com/rover10/mydocapp/config"
+	"github.com/rover10/mydocapp/database"
+	"github.com/rover10/mydocapp/server"
 )
 
 func main() {
@@ -23,9 +23,9 @@ func main() {
 	fmt.Println(dborm)
 	config := config.Config{}
 	config.APIPath = "/"
-	config.DBHost = "localhost"
-	config.DBName = "docapp"
-	config.DBPassword = "root"
+	config.DBHost = "docappdb-instance.c7vhsch7p87v.ap-south-1.rds.amazonaws.com"
+	config.DBName = "postgres"
+	config.DBPassword = "rootR#1$09"
 	config.DBUser = "postgres"
 	config.Host = "localhost"
 	config.Port = 3000
@@ -44,7 +44,7 @@ func main() {
 }
 
 func DBConnect() (*gorm.DB, error) {
-	dbinfo := "user=postgres port=5432 password=root dbname=docapp host=localhost sslmode=disable"
+	dbinfo := "user=postgres port=5432 password=rootR#1$09 dbname=postgres host=docappdb-instance.c7vhsch7p87v.ap-south-1.rds.amazonaws.com sslmode=disable"
 	db, err := gorm.Open("postgres", dbinfo)
 	//defer db.Close()
 	if err != nil {

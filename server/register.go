@@ -11,11 +11,11 @@ import (
 	"github.com/dgrijalva/jwt-go"
 
 	"github.com/labstack/echo"
-	"github.com/rover10/mydocapp.git/model"
-	"github.com/rover10/mydocapp.git/parseutil"
-	"github.com/rover10/mydocapp.git/querybuilder"
-	"github.com/rover10/mydocapp.git/service"
-	"github.com/rover10/mydocapp.git/token"
+	"github.com/rover10/mydocapp/model"
+	"github.com/rover10/mydocapp/parseutil"
+	"github.com/rover10/mydocapp/querybuilder"
+	"github.com/rover10/mydocapp/service"
+	"github.com/rover10/mydocapp/token"
 )
 
 // Ping - This function will ping the echo server

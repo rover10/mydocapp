@@ -1,4 +1,4 @@
-module github.com/rover10/mydocapp.git
+module github.com/rover10/mydocapp
 
 go 1.14
 
