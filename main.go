@@ -7,10 +7,10 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
-	"github.com/rover10/mydocapp/api"
-	"github.com/rover10/mydocapp/config"
-	"github.com/rover10/mydocapp/database"
-	"github.com/rover10/mydocapp/server"
+	"github.com/rover10/api"
+	"github.com/rover10/config"
+	"github.com/rover10/database"
+	"github.com/rover10/server"
 )
 
 func main() {

@@ -4,8 +4,8 @@ import (
 	"path"
 
 	"github.com/labstack/echo/middleware"
-	"github.com/rover10/mydocapp/auth"
-	"github.com/rover10/mydocapp/server"
+	"github.com/rover10/auth"
+	"github.com/rover10/server"
 )
 
 func Api(server *server.Server) {

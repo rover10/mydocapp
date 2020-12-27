@@ -12,9 +12,9 @@ import (
 	"github.com/boombuler/barcode/qr"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
-	"github.com/rover10/mydocapp/model"
-	"github.com/rover10/mydocapp/response"
-	"github.com/rover10/mydocapp/token"
+	"github.com/rover10/model"
+	"github.com/rover10/response"
+	"github.com/rover10/token"
 )
 
 //Doctor read a doctor

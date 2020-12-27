@@ -4,7 +4,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-	"github.com/rover10/mydocapp/server"
+	"github.com/rover10/server"
 )
 
 //var serv = server.NewServer(config.Config{})

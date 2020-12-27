@@ -11,8 +11,8 @@ import (
 	"github.com/blevesearch/bleve"
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
-	"github.com/rover10/mydocapp/config"
-	"github.com/rover10/mydocapp/database"
+	"github.com/rover10/config"
+	"github.com/rover10/database"
 )
 
 type Server struct {

@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	"github.com/rover10/mydocapp/model"
-	"github.com/rover10/mydocapp/parseutil"
-	"github.com/rover10/mydocapp/querybuilder"
-	"github.com/rover10/mydocapp/token"
+	"github.com/rover10/model"
+	"github.com/rover10/parseutil"
+	"github.com/rover10/querybuilder"
+	"github.com/rover10/token"
 )
 
 //UpdateDoctor update
