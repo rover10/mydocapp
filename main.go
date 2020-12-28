@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"os"
+	"strconv"
 
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/gommon/log"
@@ -28,7 +30,7 @@ func main() {
 	config.DBPassword = "rootR#1$09"
 	config.DBUser = "postgres"
 	config.Host = "localhost"
-	config.Port = 8080
+	config.Port, _ = strconv.Atoi(os.Getenv("PORT"))
 	config.WebDir = "web"
 	server := server.NewServer(config)
 	docdb := database.DocDB{}
