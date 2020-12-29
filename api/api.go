@@ -20,6 +20,7 @@ func Api(server *server.Server) {
 	server.Router.GET("/is-admin", h.Private, auth.IsLoggedIn, auth.IsAdmin)
 	server.Router.POST("/refresh", h.Token)
 
+	server.Router.GET(path.Join(server.APIPath, "/"), server.Ping)
 	server.Router.GET(path.Join(server.APIPath, "/v1/ping"), server.Ping)
 	server.Router.GET(path.Join(server.APIPath, "/v1/user/:uid"), server.RegisterUser)
 	server.Router.POST(path.Join(server.APIPath, "/v1/user"), server.RegisterUser)
