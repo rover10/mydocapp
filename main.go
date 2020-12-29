@@ -32,7 +32,7 @@ func main() {
 	config.Host = "localhost"
 	port, err := strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
-		config.Port = 3000
+		config.Port = 5000
 	} else {
 		config.Port = port
 	}
