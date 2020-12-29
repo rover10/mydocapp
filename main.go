@@ -30,7 +30,13 @@ func main() {
 	config.DBPassword = "rootR#1$09"
 	config.DBUser = "postgres"
 	config.Host = "localhost"
-	config.Port, _ = strconv.Atoi(os.Getenv("PORT"))
+	port, err := strconv.Atoi(os.Getenv("PORT"))
+	if err != nil {
+		config.Port = 3000
+	} else {
+		config.Port = port
+	}
+
 	config.WebDir = "web"
 	server := server.NewServer(config)
 	docdb := database.DocDB{}
