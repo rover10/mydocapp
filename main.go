@@ -36,6 +36,8 @@ func main() {
 	} else {
 		config.Port = port
 	}
+	log.Info("Port connected")
+	log.Info(config.Port)
 
 	config.WebDir = "web"
 	server := server.NewServer(config)
