@@ -89,7 +89,7 @@
             <nav class="nav" style="float:right">
                 <div ng-show="!loginForm" style = "margin-bottom: 50px;">   
     
-                    <button ng-click="showBookAppointment(); getPatients(); getClinics();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap" class="btn btn-link text-left" type="button" >
+                    <button ng-click="showBookAppointment(); getPatients(); getClinics(); getDiseases();" data-toggle="modal" data-target="#newappointmentModel" data-whatever="@getbootstrap" class="btn btn-link text-left" type="button" >
                         <i class="material-icons">add</i> New Appointment
                     </button>
                     <button ng-click="" class="btn btn-link text-left" type="button" id="ttsetting">
@@ -328,7 +328,15 @@
             
                         <div class="form-group col-md-6">
                             <label for="newappointment.diseaseId">Disease</label>
-                            <input id="newappointment.diseaseId" class="form-control" ng-model = "newappointment.diseaseId" type = "text" >
+                            
+
+                            <!--input type="text" id="newappointment.clinicId" class="form-control" ng-model = "newappointment.clinicId" placeholder="Clinic " -->
+                            <div class="input-group mb-3">
+                                <select class="custom-select" id="inputGroupSelect03"   ng-model = "newappointment.diseaseId">
+                                        <option value="{{x.id}}"  ng-repeat = "x in diseases">{{x.name }}</option>
+                                </select>
+                            </div> 
+
                           </div>
                     </div>
             
@@ -762,6 +770,25 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
             // success
             console.log(response);
             $scope.clinics = response.data;
+        }, 
+        function(response) { // optional
+                // failed
+                console.log("Failed")
+        });;
+    }
+
+    // Diseases
+    $scope.getDiseases = function () {
+        console.log(config)
+        var config = {headers:  {
+        'Authorization': 'Bearer ' + $scope.loginToken,
+        'Content-Type': 'application/json'
+        }
+        }; 
+        $http.get("v1/disease", config).then(function(response) {
+            // success
+            console.log(response);
+            $scope.diseases = response.data;
         }, 
         function(response) { // optional
                 // failed

@@ -33,6 +33,16 @@ func (s *Server) Clinic(context echo.Context) error {
 }
 
 //Clinic read a clinic detail
+func (s *Server) Disease(context echo.Context) error {
+	log.Println("Disease")
+	clinics := []model.Disease{}
+	if err := s.DB.DBORM.Table("disease").Find(&clinics).Error; err != nil {
+		return err
+	}
+	return context.JSON(http.StatusOK, clinics)
+}
+
+//Clinic read a clinic detail
 func (s *Server) GenerateQr(context echo.Context) error {
 	//login := token.GetLoggedIn(context)
 	//accountID := login["uid"].(string)
