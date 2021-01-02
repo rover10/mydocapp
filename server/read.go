@@ -32,7 +32,7 @@ func (s *Server) Clinic(context echo.Context) error {
 	return context.JSON(http.StatusOK, clinics)
 }
 
-//Clinic read a clinic detail
+//Disease reads a disease detail
 func (s *Server) Disease(context echo.Context) error {
 	log.Println("Disease")
 	clinics := []model.Disease{}
@@ -40,6 +40,24 @@ func (s *Server) Disease(context echo.Context) error {
 		return err
 	}
 	return context.JSON(http.StatusOK, clinics)
+}
+
+//UserType reads user type
+func (s *Server) UserType(context echo.Context) error {
+	userType := []model.UserType{}
+	if err := s.DB.DBORM.Table("user_type").Find(&userType).Error; err != nil {
+		return err
+	}
+	return context.JSON(http.StatusOK, userType)
+}
+
+//Country reads countries
+func (s *Server) Country(context echo.Context) error {
+	countries := []model.Country{}
+	if err := s.DB.DBORM.Table("country").Find(&countries).Error; err != nil {
+		return err
+	}
+	return context.JSON(http.StatusOK, countries)
 }
 
 //Clinic read a clinic detail

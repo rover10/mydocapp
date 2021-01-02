@@ -45,7 +45,8 @@ func Api(server *server.Server) {
 	server.Router.GET(path.Join(server.APIPath, "/v1/qrcode"), server.GenerateQr, auth.IsLoggedIn)
 	server.Router.GET(path.Join(server.APIPath, "/v1/search"), server.Search, auth.IsLoggedIn)
 	server.Router.GET(path.Join(server.APIPath, "/v1/disease"), server.Disease, auth.IsLoggedIn)
-
+	server.Router.GET(path.Join(server.APIPath, "/v1/usertype"), server.UserType)
+	server.Router.GET(path.Join(server.APIPath, "/v1/country"), server.Country)
 	//server.Router.File("/", "app/index.html")
 	server.Router.Static("static/*", "web/assets")
 	//e.Static("/", "assets")

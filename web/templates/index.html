@@ -134,7 +134,7 @@
                                 <div class="form-group row-md-4">
                                     <label for="login"></label> 
                                     <button class="btn btn-primary" type="button" ng-click="login();" >Login</button>
-                                    <a href="#" ng-click="newRegisterForm(true)" ng-show="registerlink"  data-toggle="modal" data-target="#registerNewUser" data-whatever="@getbootstrap"> Register</a>
+                                    <a href="#" ng-click="newRegisterForm(true);getUserType();getCountries();" ng-show="registerlink"  data-toggle="modal" data-target="#registerNewUser" data-whatever="@getbootstrap"> Register</a>
                                 </div>
                             </div>
                         </div>
@@ -215,9 +215,11 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="newuser.userType">User type</label>
-                            <input id="newuser.userType" class="form-control" ng-model = "newuser.userType" type = "text" placeholder="User type">
-                           
-                          </div>
+                            <!--input id="newuser.userType" class="form-control" ng-model = "newuser.userType" type = "text" placeholder="User type"-->
+                            <select class="custom-select" id="inputGroupSelect07"   ng-model = "newuser.userType">
+                                <option value="{{x.id}}"  ng-repeat = "x in userType">{{x.type }}</option>
+                            </select>
+                            </div>
                           <div class="form-group col-md-6">
                             <label for="newuser.age">Age</label>
                             <input id="newuser.age" class="form-control" ng-model = "newuser.age" type = "text" placeholder="Age">
@@ -228,8 +230,11 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="newuser.gender">Gender</label>
-                            <input id="newuser.gender" class="form-control" ng-model = "newuser.gender" type = "text" placeholder="Gender">
-                           
+                            <!--input id="newuser.gender" class="form-control" ng-model = "newuser.gender" type = "text" placeholder="Gender"-->
+                            <select class="custom-select" id="inputGroupSelect05"   ng-model = "newuser.gender">
+                                <option value="{{x.id}}"  ng-repeat = "x in gender">{{x.name }}</option>
+                            </select>
+                      
                           </div>
                           <div class="form-group col-md-6">
                             <label for="newuser.email">Email</label>
@@ -246,8 +251,11 @@
                           </div>
                           <div class="form-group col-md-6">
                             <label for="newuser.country">Country</label>
-                            <input id="newuser.country" class="form-control" ng-model = "newuser.country" type = "text" placeholder="Country">
-                          </div> 
+                            <!--input id="newuser.country" class="form-control" ng-model = "newuser.country" type = "text" placeholder="Country"-->
+                            <select class="custom-select" id="inputGroupSelect06"   ng-model = "newuser.country">
+                                <option value="{{x.id}}"  ng-repeat = "x in countries">{{x.name }}</option>
+                            </select>
+                        </div> 
                     </div>
             
                     
@@ -267,7 +275,7 @@
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="registerClose">Close</button>
             <Button class="btn btn-primary" ng-model = "newusersubmit" ng-click="register();">Register</Button>
         </div>
         </div>
@@ -344,8 +352,8 @@
                 </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <Button class="btn btn-primary" ng-model="newusersubmit" ng-click="bookAppointment();">Book</Button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="btnBookAppointment">Close</button>
+            <Button class="btn btn-primary" ng-model="newusersubmit" ng-click="bookAppointment();" >Book</Button>
         </div>
         </div>
     </div>
@@ -377,6 +385,8 @@
         </div>
         <div class="modal-footer">
             <Button class="btn btn-primary" ng-model="newusersubmit" ng-click="updateAppointmentTime();">Re-schedule</Button>
+            <Button class="btn btn-primary"  data-dismiss="modal" id="btnUpdateAppointment" ng-show="false">Close</Button>
+            
         </div>
         </div>
     </div>
@@ -652,6 +662,7 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
     $scope.patients = [];
     $scope.loginForm = true;
     $scope.registerlink = true;
+    $scope.gender = [{"id":1,"name":"Male"},{"id":2,"name":"Female"},{"id":3,"name":"Other"},]
    
     $scope.sessionValid = function(){
         var config = {headers:  {
@@ -796,6 +807,44 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
         });;
     }
 
+    // UserType
+    $scope.getUserType = function () {
+        console.log(config)
+        var config = {headers:  {
+        'Authorization': 'Bearer ' + $scope.loginToken,
+        'Content-Type': 'application/json'
+        }
+        }; 
+        $http.get("v1/usertype", config).then(function(response) {
+            // success
+            console.log(response);
+            $scope.userType = response.data;
+        }, 
+        function(response) { // optional
+                // failed
+                console.log("Failed")
+        });;
+    }
+
+    // UserType
+    $scope.getCountries = function () {
+        console.log(config)
+        var config = {headers:  {
+        'Authorization': 'Bearer ' + $scope.loginToken,
+        'Content-Type': 'application/json'
+        }
+        }; 
+        $http.get("v1/country", config).then(function(response) {
+            // success
+            console.log(response);
+            $scope.countries = response.data;
+        }, 
+        function(response) { // optional
+                // failed
+                console.log("Failed")
+        });;
+    }
+
     // New User
     $scope.newuser =  {}
     $scope.newuser.showForm = false;
@@ -845,6 +894,7 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
             
             $scope.login();
             $scope.newRegisterForm(false);
+            document.getElementById("registerClose").click();
         }, 
         function(response) { // optional
                 // failed
@@ -888,7 +938,8 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
             }).then(function(response) {
             //Login
             $scope.myappointments = $scope.myappointments.concat(response.data);
-                response.data
+            response.data
+            document.getElementById("btnBookAppointment").click();
         }, 
         function(response) { // optional
                 // failed
@@ -926,6 +977,7 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
             }).then(function(response) {
             
             $scope.myappointments[$scope.updatedAppointmentObject] = response.data;
+            document.getElementById("btnUpdateAppointment").click();
         }, 
         function(response) { // optional
                 // failed
