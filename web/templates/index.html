@@ -695,15 +695,13 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
             })
             .then(function(response) {
                     // success
-                    console.log(response);
                     $scope.loginToken = response.data.token;
-                    console.log("-->")
-                    console.log($scope.loginToken)
                     $scope.password = "";
                     $scope.loginForm = false;
                     $scope.registerlink = false;
                    // sessionStorage.loginToken = $scope.loginToken;
                     $cookies.put('loginToken', $scope.loginToken);
+                    $scope.appointments(false,false);
             }, 
             function(response) { // optional
                     // failed
@@ -954,14 +952,11 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
 
     $scope.openUpdateModel = function(i, appointmentId) {
         $scope.updatedAppointmentId = appointmentId;
-        console.log("---->")
         console.log(appointmentId)
         $scope.updatedAppointmentObject = i;
-        
     }
 
     $scope.updateAppointmentTime = function () {
-        // console.log(config)
         var data = {
             "slotDateTime":$scope.updatedAppointmentDateTime
         }
@@ -975,18 +970,15 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
                 'Content-Type': 'application/json'
                 }
             }).then(function(response) {
-            
             $scope.myappointments[$scope.updatedAppointmentObject] = response.data;
             document.getElementById("btnUpdateAppointment").click();
         }, 
         function(response) { // optional
-                // failed
                 console.log("Appointment update Failed")
         });
     }
     //
     $scope.cancelAppointment = function (i, appointmentId) {
-       // console.log(config)
         var data = {
             "cancelled":true
         }
@@ -1003,12 +995,9 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
               $scope.myappointments.splice(i,1);
         }, 
         function(response) { // optional
-                // failed
                 console.log("Appointment update Failed")
         });;
     }
-    // /v1/appointment/:uid
-
 
     $scope.qcode = ""
     $scope.getQrCode = function (appointmentId) {
@@ -1040,15 +1029,12 @@ app.controller('personCtrl',  function($scope, $http, $cookies) {
         });;
     }
 
-    //
     $scope.arrayBufferToBase64 =  function (buffer) {
         var binary = '';
         var bytes = new Uint8Array(buffer);
-        console.log("--->**")
         console.log(bytes)
         var len = bytes.byteLength;
         for (var i = 0; i < len; i++) {
-            console.log("--->")
             binary += String.fromCharCode(bytes[i]);
         }
         return window.btoa(binary);
