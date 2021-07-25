@@ -29,7 +29,7 @@ func main() {
 	config.DBName = "postgres"
 	config.DBPassword = "root"
 	config.DBUser = "postgres"
-	config.Host = "localhost"
+	config.Host = ""
 	port, err := strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
 		config.Port = 5000
