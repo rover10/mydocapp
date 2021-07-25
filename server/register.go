@@ -66,7 +66,7 @@ func (s *Server) RegisterUser(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err)
 	}
 	fmt.Println("-->2")
-	row := tx.Raw(query, values...)
+	row := tx.Debug().Raw(query, values...)
 	if tx.Error != nil {
 		fmt.Println(tx.Error)
 		return context.JSON(http.StatusInternalServerError, err)
@@ -104,6 +104,7 @@ func (s *Server) RegisterUser(context echo.Context) error {
 	// }
 	fmt.Println("-->4")
 	// Parse response into {model.User}: ParseRow(row, returnfields)
+	s.IndexingService.IndexDoctor(body2)
 	return context.JSON(http.StatusOK, user)
 }
 
@@ -252,6 +253,7 @@ func (s *Server) RegisterDoctor(context echo.Context) error {
 	// }
 
 	// Parse response into {model.User}: ParseRow(row, returnfields)
+	s.IndexingService.IndexDoctor(body)
 	return context.JSON(http.StatusOK, doctor)
 
 }

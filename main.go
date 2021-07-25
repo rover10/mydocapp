@@ -25,9 +25,9 @@ func main() {
 	fmt.Println(dborm)
 	config := config.Config{}
 	config.APIPath = "/"
-	config.DBHost = "docappdb-instance.c7vhsch7p87v.ap-south-1.rds.amazonaws.com"
+	config.DBHost = "docapp11"
 	config.DBName = "postgres"
-	config.DBPassword = "rootR#1$09"
+	config.DBPassword = "root"
 	config.DBUser = "postgres"
 	config.Host = "localhost"
 	port, err := strconv.Atoi(os.Getenv("PORT"))
@@ -54,7 +54,9 @@ func main() {
 }
 
 func DBConnect() (*gorm.DB, error) {
-	dbinfo := "user=postgres port=5432 password=rootR#1$09 dbname=postgres host=docappdb-instance.c7vhsch7p87v.ap-south-1.rds.amazonaws.com sslmode=disable"
+	// postgres://blxiorkgqxoqts:c44c8a5f2b73f9e303446af8e2e0d53ca9c11a71686f27f413193828da72bd5b@ec2-107-21-10-179.compute-1.amazonaws.com:5432/d2hjt44nklvpml
+	dbinfo := "postgres://blxiorkgqxoqts:c44c8a5f2b73f9e303446af8e2e0d53ca9c11a71686f27f413193828da72bd5b@ec2-107-21-10-179.compute-1.amazonaws.com:5432/d2hjt44nklvpml"
+	// dbinfo := "user=postgres port=5432 password=root dbname=docapp host=localhost sslmode=disable"
 	db, err := gorm.Open("postgres", dbinfo)
 	//defer db.Close()
 	if err != nil {

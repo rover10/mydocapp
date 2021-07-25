@@ -8,9 +8,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
-
-	"github.com/rover10/model"
 )
 
 // Index doctor
@@ -18,26 +15,21 @@ import (
 // Index hospitals/clinic
 // On create & update
 type IndexService interface {
-	IndexDoctor(model.Doctor) error
+	IndexDoctor(map[string]interface{}) error
 }
 
 type IndexServiceImpl struct {
 	Client *http.Client
 }
 
-func (indexService *IndexServiceImpl) IndexDoctor(dr model.Doctor) error {
+func (indexService *IndexServiceImpl) IndexDoctor(dr map[string]interface{}) error {
 	// Get id
 
 	// Get related fields
 	// Prepare json body
 	// Index
-	indexDrUrl := "https://aw8akjyvyt:tyqzkp81x7@tarkol-8348260269.eu-central-1.bonsaisearch.net:443/doctors/_doc/" + dr.AccountID.String()
+	indexDrUrl := "https://aw8akjyvyt:tyqzkp81x7@tarkol-8348260269.eu-central-1.bonsaisearch.net:443/doctors/_doc/" + dr["accountId"].(string)
 	//indexService.Client.Post()
-	var timeout time.Duration = time.Second * 3
-	//var resbody []byte
-	client := &http.Client{
-		Timeout: timeout,
-	}
 
 	reqBody, err := json.Marshal(dr)
 	if err != nil {
@@ -48,7 +40,7 @@ func (indexService *IndexServiceImpl) IndexDoctor(dr model.Doctor) error {
 	endpoint := indexDrUrl
 	request, _ := http.NewRequest("POST", endpoint, bytes.NewReader(reqBody))
 	request.Header.Set("Content-Type", "application/json")
-	response, err := client.Do(request)
+	response, err := indexService.Client.Do(request)
 	if err != nil {
 		errStr := fmt.Sprintf("Error connecting to server %v", err)
 		log.Print(errStr)
@@ -56,7 +48,8 @@ func (indexService *IndexServiceImpl) IndexDoctor(dr model.Doctor) error {
 	}
 	defer response.Body.Close()
 	_, err = ioutil.ReadAll(response.Body)
-
+	fmt.Println("\n\nINDEXED DR. \n\n")
+	fmt.Printf("\n\nErr= %v", err)
 	return nil
 
 }

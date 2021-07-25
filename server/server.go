@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"path"
 	"text/template"
+	"time"
 
 	"github.com/blevesearch/bleve"
 	"github.com/labstack/echo"
@@ -22,6 +23,7 @@ type Server struct {
 	DB              *database.DocDB
 	SECRET_PASSWORD string
 	Index           bleve.Index
+	IndexingService IndexService
 }
 
 var SECRET_PASSWORD = "Ra@@ndom&%#@%(%5*&%^&Value(&*HJGJGJggHHJKJBJ"
@@ -73,6 +75,12 @@ func NewServer(cfg config.Config) *Server {
 	// 	log.Error("Error creating index")
 	// }
 
+	var timeout time.Duration = time.Second * 3
+	//var resbody []byte
+	client := &http.Client{
+		Timeout: timeout,
+	}
+	serv := IndexServiceImpl{Client: client}
 	server := &Server{
 		Config:          cfg,
 		Router:          echo.New(),
@@ -80,6 +88,7 @@ func NewServer(cfg config.Config) *Server {
 		DB:              nil,
 		SECRET_PASSWORD: "Ra@@ndom&%#@%(%5*&%^&Value(&*HJGJGJggHHJKJBJ",
 		Index:           nil,
+		IndexingService: &serv,
 	}
 	return server
 }

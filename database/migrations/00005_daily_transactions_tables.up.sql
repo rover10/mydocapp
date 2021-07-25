@@ -1,4 +1,4 @@
-create table appointment(uid uuid DEFAULT uuid_generate_v4() primary key, clinic_id uuid references clinic(uid) not null, account_id uuid references users(uid) not null, patient_id uuid references patient(uid) not null, doctor_id uuid references users(uid), [disease_id integer references disease(id)], no_show boolean default false not null, created_on timestamp default now(), updated_on timestamp, slot_date_time timestamp not null, contact_phone varchar); -- no_show patient reported
+create table appointment(uid uuid DEFAULT uuid_generate_v4() primary key, clinic_id uuid references clinic(uid) not null, account_id uuid references users(uid) not null, patient_id uuid references patient(uid) not null, doctor_id uuid references users(uid), disease_id integer references disease(id), no_show boolean default false not null, created_on timestamp default now(), updated_on timestamp, slot_date_time timestamp not null, contact_phone varchar); -- no_show patient reported
 create table treatment(uid uuid DEFAULT uuid_generate_v4() primary key, appointment_id uuid references appointment(uid) not null, doctor_id uuid references users(uid) not null, patient_problem_description varchar, created_on timestamp default now());
 create table doctor_observation(treatment_id uuid references treatment(uid) not null, observation varchar, created_on timestamp default now() not null, doctor_id uuid references users(uid) not null);
 create table prescription(treatment_id uuid references treatment(uid) not null, prescription varchar, created_on timestamp default now() not null, doctor_id uuid references users(uid) not null, note varchar not null, is_active boolean);
@@ -17,4 +17,10 @@ create table doctor_qualification(user_id uuid references users(uid) not null, q
 
 alter table appointment add column cancelled boolean default false;
 
-drop table appointment , treatment_detail , doctor_review , users, test_report , staff_role , doctor_qualification cascade;
+-- This might not be needed
+-- drop table appointment , treatment_detail , doctor_review , users, test_report , staff_role , doctor_qualification cascade;
+  
+insert into user_type values(1, 'User'),(2, 'Doctor'),(3, 'Staff');
+insert into gender values(1, 'Male'),(2, 'Female'),(3, 'Others');
+insert into state values(1, 'Karnatak', 1 ), (2, 'Bihar', 1 ), (3, 'Jharkhand', 1 );
+insert into disease values(1,'Diabetes', 'Diabetes'), (2, 'Hernia', 'Hernia'), (3, 'Malaria', 'Malaria'), (4, 'Dengue', 'Dengue');
