@@ -28,7 +28,7 @@ func (indexService *IndexServiceImpl) IndexDoctor(dr map[string]interface{}) err
 	// Get related fields
 	// Prepare json body
 	// Index
-	indexDrUrl := "https://aw8akjyvyt:tyqzkp81x7@tarkol-8348260269.eu-central-1.bonsaisearch.net:443/doctors/_doc/" + dr["accountId"].(string)
+	indexDrUrl := "https://jzdelm3t0f:8rh2ymu7jz@tarkol-954276591.us-east-1.bonsaisearch.net:443/doctors/_doc/" + dr["uid"].(string)
 	//indexService.Client.Post()
 
 	reqBody, err := json.Marshal(dr)
@@ -38,7 +38,7 @@ func (indexService *IndexServiceImpl) IndexDoctor(dr map[string]interface{}) err
 	}
 
 	endpoint := indexDrUrl
-	request, _ := http.NewRequest("POST", endpoint, bytes.NewReader(reqBody))
+	request, _ := http.NewRequest("PUT", endpoint, bytes.NewReader(reqBody))
 	request.Header.Set("Content-Type", "application/json")
 	response, err := indexService.Client.Do(request)
 	if err != nil {
@@ -50,6 +50,13 @@ func (indexService *IndexServiceImpl) IndexDoctor(dr map[string]interface{}) err
 	_, err = ioutil.ReadAll(response.Body)
 	fmt.Println("\n\nINDEXED DR. \n\n")
 	fmt.Printf("\n\nErr= %v", err)
+	fmt.Printf("\n\n DR = %v", dr)
+	fmt.Println("\n++------->")
+	fmt.Println()
+	data := fmt.Sprintf("%s", reqBody)
+	fmt.Println(data)
+	fmt.Println()
+	fmt.Println("\n++------->")
 	return nil
 
 }

@@ -2,6 +2,7 @@ package server
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -85,7 +86,7 @@ func (s *Server) RegisterUser(context echo.Context) error {
 	if body2["age"] == nil {
 		body2["age"] = 1
 	}
-	body2["firstName"] = "Self"
+	//body2["firstName"] = "Self"
 	body2["accountId"] = user.UID.String()
 	err = service.RegisterPatient(tx, body2)
 	if err != nil {
@@ -104,7 +105,7 @@ func (s *Server) RegisterUser(context echo.Context) error {
 	// }
 	fmt.Println("-->4")
 	// Parse response into {model.User}: ParseRow(row, returnfields)
-	s.IndexingService.IndexDoctor(body2)
+	//s.IndexingService.IndexDoctor(body2)
 	return context.JSON(http.StatusOK, user)
 }
 
@@ -253,9 +254,51 @@ func (s *Server) RegisterDoctor(context echo.Context) error {
 	// }
 
 	// Parse response into {model.User}: ParseRow(row, returnfields)
-	s.IndexingService.IndexDoctor(body)
+	// Read user
+
+	u := model.User{}
+	err = s.DB.DBORM.Table("users").Where("uid = $1", doctor.AccountID).Find(&u).Error
+	if err != nil {
+		fmt.Errorf("Error: %+v")
+	} else {
+		fmt.Println("->")
+		//fmt.Println(getMap(u))
+		//
+		lastName := ""
+		if u.LastName != nil {
+			lastName = *u.LastName
+		}
+		doc := map[string]interface{}{
+			"uid":       u.UID.String(),
+			"firstName": u.FirstName,
+			"lastName":  lastName,
+			"phone":     u.Phone,
+			"email":     u.Email,
+			//"countryId": u.Country,
+			"fee": body["fee"],
+		}
+		s.IndexingService.IndexDoctor(doc)
+	}
+
 	return context.JSON(http.StatusOK, doctor)
 
+}
+
+func getMap(d interface{}) map[string]interface{} {
+	data := map[string]interface{}{}
+	jsonbody, err := json.Marshal(d)
+	if err != nil {
+		// do error check
+		fmt.Println(err)
+		return data
+	}
+
+	if err := json.Unmarshal(jsonbody, &data); err != nil {
+		// do error check
+		fmt.Println(err)
+
+	}
+	return data
 }
 
 //RegisterClinic register a new clinic

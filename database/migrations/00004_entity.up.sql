@@ -1,4 +1,4 @@
-   create table users(uid uuid DEFAULT uuid_generate_v4() primary key, user_type integer references user_type(id), is_active boolean, first_name varchar not null, last_name varchar, gender_id integer references gender(id) not null, phone varchar unique not null, email varchar unique not null, country_id integer references country(id) not null, created_on timestamp default now(), updated_on timestamp);
+   create table users(uid uuid DEFAULT uuid_generate_v4() primary key, user_type integer references user_type(id), is_active boolean, first_name varchar not null, last_name varchar, gender_id integer references gender(id) not null, phone varchar unique not null, email varchar unique not null, country_id integer references country(id) not null, password varchar not null, created_on timestamp default now(), updated_on timestamp);
    create table patient(uid uuid DEFAULT uuid_generate_v4() primary key, account_id uuid references users(uid), first_name varchar not null, last_name varchar, gender_id int references gender(id), age int not null, phone varchar not null, email varchar not null, any_existing_medical_condition jsonb, country_id integer references country(id) not null, created_on timestamp default now(), updated_on timestamp); --account_id is the account through which it is related; it can be null if user registered anonymously, existing_condition such as diabetes, heart issue, allergy, email and phone can be picked from account owner by default
    create table doctor(account_id uuid references users(uid) unique not null , fee float check (fee >= 0), rating float check (rating >= 0) check (rating <= 5) , practice_start_date timestamp, approved boolean, onboarded_on timestamp);
    create table clinic(uid uuid DEFAULT uuid_generate_v4() primary key, account_id uuid references users(uid) not null, name varchar not null, address varchar not null, state_id integer references state(id) not null, country_id integer references country(id) not null, phone varchar unique not null, email varchar unique not null, approved boolean, created_on timestamp default now(), onboarded_on timestamp);
@@ -6,3 +6,6 @@
   
   --One staff can't be register multiple time in same clinic
    create unique index if not exists unique_account_id_clinic_id_staff on staff(account_id, clinic_id);
+
+  insert into user_type values(1, 'User'),(2, 'Doctor'),(3, 'Staff');
+  insert into gender values(1, 'Male'),(2, 'Female'),(3, 'Others');
